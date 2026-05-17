@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>JHS CS Club</title>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg soft-green">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="index.html">JHS CS Club</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-auto gap-2">
+                                <li class="nav-item"><a class="nav-link btn btn-sm btn-outline-dark" href="#spotlighted-resources">Featured</a></li>
+                                <li class="nav-item"><a class="nav-link btn btn-sm btn-outline-dark" href="#resourceList">Resource Directory</a></li>
+                            </ul>
+                        </div>
+            </div>
+</nav>
+
+
+<section class="hero-grad py-5">
+    <div class="container text-center">
+
+        <h1 class="display-4 fw-bold">Jordan HS Computer Science Club</h1>
+        <p class="lead px-md-5">A website highlighting our school's computer science club!</p>
+        <p class="text-muted mt-3 small px-md-5">
+            This website is responsive and can be viewed properly on any device regardless of screen size.
+        </p>
+    </div>
+</section>
+
+<section class="container py-5" id="spotlighted-resources">
+    <h2 class="border-bottom pb-2">🌟 Featured</h2>
+    <div class="row mt-4 g-4">
+        <div class="col-md-4">
+            <div class="card spotlight p-3 h-100">
+                <h5>Accomplishment 1</h5>
+                <p>Sample text.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card spotlight p-3 h-100">
+                <h5>Accomplishment 2</h5>
+                <p>Sample text.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card spotlight p-3 h-100">
+                <h5>Accomplishment 3</h5>
+                <p>Sample text.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <h2 class="border-bottom pb-2">📚 CS Club Resource Directory</h2>
+
+    <input id="search" class="form-control my-3" placeholder="Search resources...">
+            <div id="resourceList" class="row g-4"></div>
+</section>
+
+
+
+<footer class="text-center py-4 border-top">
+    <p class="text-muted mb-0">© 2026 Ram Jhaver</p>
+</footer>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="script.js"></script> -->
+</body>
+</html>

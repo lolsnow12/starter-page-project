@@ -1,0 +1,159 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
+    background-color: #f9f9f9;
+}
+
+
+
+.soft-green {
+    background-color: #ccffcc !important;
+}
+
+
+
+
+
+
+.green-btn {
+    background-color: #ccffcc;
+            border: none;
+    font-weight: 600;
+}
+
+.green-btn:hover {
+    background-color: #a0dea0;
+}
+
+
+
+
+.hero-grad {
+    background: linear-gradient(45deg, #f9f9f9, #ccffcc);
+}
+
+.card {
+    border-radius: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+textarea {
+    resize: none;
+}
+
+
+
+
+section {
+    scroll-margin-top: 80px;
+}
+
+.spotlight {
+    background: #e9ffe9;
+    border-left: 6px solid #6bcf6b;
+}
+.ai-modal {
+    display: none;
+    position: fixed;
+    top:0;
+        left:0;
+        width:100%;
+        height:100%;
+    background: rgba(0,0,0,0.5);
+    z-index:1200;
+    justify-content: center;
+    align-items: center;
+}
+
+.ai-chat-container {
+    background: #fff;
+            width: 100%;
+            max-width: 400px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ai-chat-header {
+    background: #ccffcc;
+    padding: 12px;
+        font-weight: 600;
+        display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ai-chat-body {
+    padding: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ai-chat-input {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border-top: 1px solid #ccc;
+}
+
+        .ai-chat-input input {
+    flex: 1;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+}
+
+.ai-msg {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 14px;
+
+
+    position: relative;
+    font-size: 0.9rem;
+    animation: fadeIn 0.3s;
+}
+
+.ai-msg.bot {
+    background: #ccffcc;
+    align-self: flex-start;
+}
+
+.ai-msg.user {
+    background: #f1f1f1;
+    align-self: flex-end;
+}
+
+
+
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(5px);}
+            to {opacity:1; transform: translateY(0);}
+}
+
+.navbar-nav .nav-link:hover {
+    color: white !important;
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.fade-in.show {
+    opacity: 1;
+    transform: translateY(0);
+}
