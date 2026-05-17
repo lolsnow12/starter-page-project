@@ -1,87 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>The Page Project</title>
-
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Page Project — Books for Every Child</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg soft-green">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" href="index.html">The Page Project</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav ms-auto gap-2">
-                                <li class="nav-item"><a class="nav-link btn btn-sm btn-outline-dark" href="#spotlighted-resources">Featured</a></li>
-                                <li class="nav-item"><a class="nav-link btn btn-sm btn-outline-dark" href="#resourceList">Resource Directory</a></li>
-                            </ul>
-                        </div>
-            </div>
+ 
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <span class="brand-icon">📖</span>
+      <span class="brand-text">The Page Project</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+        <li class="nav-item"><a class="nav-link" href="#mission">Mission</a></li>
+        <li class="nav-item"><a class="nav-link" href="#impact">Impact</a></li>
+        <li class="nav-item"><a class="nav-link" href="#tracker">Book Tracker</a></li>
+        <li class="nav-item"><a class="nav-link" href="#drives">Book Drives</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        <li class="nav-item ms-lg-3">
+          <a class="nav-link btn-donate" href="#tracker">Donate Books</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
-
-
-<section class="hero-grad py-5">
-    <div class="container text-center">
-
-        <h1 class="display-4 fw-bold">The Page Project</h1>
-        <p class="lead px-md-5">A website highlighting our nonprofit and the impact it has!</p>
-        <p class="text-muted mt-3 small px-md-5">
-            This website is responsive and can be viewed properly on any device regardless of screen size.
+ 
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="row align-items-center min-vh-100">
+      <div class="col-lg-7 py-5">
+        <div class="hero-eyebrow fade-in">📚 Nonprofit Book Drive Initiative</div>
+        <h1 class="hero-title fade-in delay-1">
+          Every Child<br><em>Deserves</em> a Story
+        </h1>
+        <p class="hero-sub fade-in delay-2">
+          The Page Project collects and donates books to underserved communities, putting the power of reading into the hands of every child — one page at a time.
         </p>
+        <div class="hero-actions fade-in delay-3">
+          <a href="#tracker" class="btn btn-primary-custom">Log a Donation</a>
+          <a href="#mission" class="btn btn-ghost-custom">Our Mission →</a>
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-flex justify-content-center py-5">
+        <div class="hero-visual fade-in delay-2">
+          <div class="book-stack">
+            <div class="book b1"></div>
+            <div class="book b2"></div>
+            <div class="book b3"></div>
+            <div class="book b4"></div>
+            <div class="book b5"></div>
+            <div class="book b6"></div>
+          </div>
+          <div class="counter-badge">
+            <span class="counter-number" id="heroCounter">0</span>
+            <span class="counter-label">Books Donated</span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
-
-<section class="container py-5" id="spotlighted-resources">
-    <h2 class="border-bottom pb-2">🌟 Featured</h2>
-    <div class="row mt-4 g-4">
-        <div class="col-md-4">
-            <div class="card spotlight p-3 h-100">
-                <h5>Accomplishment 1</h5>
-                <p>Sample text.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card spotlight p-3 h-100">
-                <h5>Accomplishment 2</h5>
-                <p>Sample text.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card spotlight p-3 h-100">
-                <h5>Accomplishment 3</h5>
-                <p>Sample text.</p>
-            </div>
-        </div>
+ 
+<!-- STATS STRIP -->
+<section class="stats-strip">
+  <div class="container">
+    <div class="row g-0 text-center">
+      <div class="col-6 col-md-3 stat-cell">
+        <div class="stat-number" id="stat-books">0</div>
+        <div class="stat-label">Books Donated</div>
+      </div>
+      <div class="col-6 col-md-3 stat-cell">
+        <div class="stat-number" id="stat-drives">4</div>
+        <div class="stat-label">Book Drives Held</div>
+      </div>
+      <div class="col-6 col-md-3 stat-cell">
+        <div class="stat-number" id="stat-communities">12</div>
+        <div class="stat-label">Communities Reached</div>
+      </div>
+      <div class="col-6 col-md-3 stat-cell">
+        <div class="stat-number" id="stat-donors">0</div>
+        <div class="stat-label">Donors</div>
+      </div>
     </div>
+  </div>
 </section>
-
-<section class="container py-5">
-    <h2 class="border-bottom pb-2">📚 CS Club Resource Directory</h2>
-
-    <input id="search" class="form-control my-3" placeholder="Search resources...">
-            <div id="resourceList" class="row g-4"></div>
+ 
+<!-- MISSION -->
+<section class="section-mission" id="mission">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5">
+        <div class="mission-shelf">
+          <div class="shelf-row sr1">
+            <div class="shelf-book sb1"></div>
+            <div class="shelf-book sb2"></div>
+            <div class="shelf-book sb3"></div>
+            <div class="shelf-book sb4"></div>
+            <div class="shelf-book sb5"></div>
+          </div>
+          <div class="shelf-plank"></div>
+          <div class="shelf-row sr2">
+            <div class="shelf-book sb6"></div>
+            <div class="shelf-book sb7"></div>
+            <div class="shelf-book sb8"></div>
+            <div class="shelf-book sb9"></div>
+          </div>
+          <div class="shelf-plank"></div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="section-tag">Who We Are</div>
+        <h2 class="section-title">Bridging the<br><em>Literacy Gap</em></h2>
+        <p class="section-body">
+          The Page Project was founded on a simple truth: access to books shouldn't depend on a child's zip code. We organize community book drives, partner with schools and libraries, and ensure that donated books reach the children who need them most.
+        </p>
+        <p class="section-body">
+          From picture books to young adult novels, every donation is sorted, tracked, and delivered with care — because every story has the power to change a life.
+        </p>
+        <div class="row mt-4 g-3">
+          <div class="col-sm-6">
+            <div class="mission-card">
+              <div class="mc-icon">🚌</div>
+              <div class="mc-text"><strong>Book Drives</strong><p>We organize drives at schools, libraries, and local events.</p></div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="mission-card">
+              <div class="mc-icon">🏫</div>
+              <div class="mc-text"><strong>Direct Delivery</strong><p>Books are hand-delivered to partner schools and community centers.</p></div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="mission-card">
+              <div class="mc-icon">📊</div>
+              <div class="mc-text"><strong>Tracked Impact</strong><p>Every book is logged so donors can see their real impact.</p></div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="mission-card">
+              <div class="mc-icon">🤝</div>
+              <div class="mc-text"><strong>Community Partners</strong><p>We work with local organizations to maximize our reach.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-
-
-
-<footer class="text-center py-4 border-top">
-    <p class="text-muted mb-0">© 2026 The Page Project</p>
+ 
+<!-- IMPACT -->
+<section class="section-impact" id="impact">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag light">Our Impact</div>
+      <h2 class="section-title light">Books That Changed<br><em>Everything</em></h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="impact-card fade-in">
+          <div class="impact-quote">"Getting a book of my own was the happiest day of my year. I read it three times."</div>
+          <div class="impact-attr">— Student, Eastside Elementary</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="impact-card ic-highlight fade-in delay-1">
+          <div class="impact-number">500+</div>
+          <div class="impact-desc">Books donated in our biggest single drive, reaching 3 schools in one weekend.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="impact-card fade-in delay-2">
+          <div class="impact-quote">"The Page Project restocked our entire classroom library. Our students finally have books to take home."</div>
+          <div class="impact-attr">— Teacher, Lincoln Community School</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- BOOK TRACKER -->
+<section class="section-tracker" id="tracker">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag">Donation Tracker</div>
+      <h2 class="section-title">Log &amp; Track<br><em>Every Book</em></h2>
+      <p class="section-body mx-auto" style="max-width:520px">
+        Log your book donation below. Every entry is saved and counted toward our community total. Together we can see the full story of our impact.
+      </p>
+    </div>
+ 
+    <!-- Progress Bar -->
+    <div class="goal-bar-wrap mb-5">
+      <div class="goal-bar-header">
+        <span>Progress toward <strong id="goal-label">1,000 Book</strong> goal</span>
+        <span id="goal-pct">0%</span>
+      </div>
+      <div class="goal-bar-track">
+        <div class="goal-bar-fill" id="goalBarFill"></div>
+      </div>
+    </div>
+ 
+    <div class="row g-4">
+      <!-- LOG FORM -->
+      <div class="col-lg-5">
+        <div class="tracker-form-card">
+          <h4 class="tracker-form-title">📬 Log a Donation</h4>
+          <div class="mb-3">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-control custom-input" id="donorName" placeholder="e.g. Jane Smith">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Number of Books</label>
+            <input type="number" class="form-control custom-input" id="bookCount" min="1" placeholder="e.g. 10">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Genre / Category</label>
+            <select class="form-select custom-input" id="bookGenre">
+              <option value="">— Select genre —</option>
+              <option>Picture Books</option>
+              <option>Early Readers</option>
+              <option>Middle Grade</option>
+              <option>Young Adult</option>
+              <option>Non-Fiction</option>
+              <option>Science &amp; Nature</option>
+              <option>Biography</option>
+              <option>Mixed / General</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Destination Community <span class="text-muted">(optional)</span></label>
+            <input type="text" class="form-control custom-input" id="bookDest" placeholder="e.g. Northside Library">
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Note <span class="text-muted">(optional)</span></label>
+            <textarea class="form-control custom-input" id="bookNote" rows="2" placeholder="Any message or dedication..."></textarea>
+          </div>
+          <button class="btn btn-primary-custom w-100" id="logBtn">Log Donation →</button>
+          <div id="logMsg" class="log-msg mt-3" style="display:none"></div>
+        </div>
+      </div>
+ 
+      <!-- DONATION LOG TABLE -->
+      <div class="col-lg-7">
+        <div class="tracker-log-card">
+          <div class="tracker-log-header">
+            <h4 class="tracker-log-title">📋 Donation Log</h4>
+            <div class="tracker-log-controls">
+              <input type="text" class="form-control custom-input search-small" id="logSearch" placeholder="Search…">
+              <select class="form-select custom-input search-small" id="logFilter">
+                <option value="">All Genres</option>
+                <option>Picture Books</option>
+                <option>Early Readers</option>
+                <option>Middle Grade</option>
+                <option>Young Adult</option>
+                <option>Non-Fiction</option>
+                <option>Science &amp; Nature</option>
+                <option>Biography</option>
+                <option>Mixed / General</option>
+              </select>
+            </div>
+          </div>
+          <div class="tracker-table-wrap">
+            <table class="tracker-table" id="donationTable">
+              <thead>
+                <tr>
+                  <th>Donor</th>
+                  <th>Books</th>
+                  <th>Genre</th>
+                  <th>Destination</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="donationBody"></tbody>
+            </table>
+            <div id="emptyState" class="empty-state">
+              <div class="empty-icon">📭</div>
+              <p>No donations logged yet.<br>Be the first!</p>
+            </div>
+          </div>
+          <div class="tracker-totals" id="trackerTotals">
+            <span>Showing <strong id="rowCount">0</strong> donations</span>
+            <span>Total: <strong id="totalCount">0</strong> books</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- BOOK DRIVES -->
+<section class="section-drives" id="drives">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag">Upcoming &amp; Past</div>
+      <h2 class="section-title">Book Drive<br><em>Events</em></h2>
+    </div>
+    <div class="row g-4" id="drivesGrid"></div>
+  </div>
+</section>
+ 
+<!-- CONTACT -->
+<section class="section-contact" id="contact">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5">
+        <div class="section-tag light">Get Involved</div>
+        <h2 class="section-title light">Let's Write the<br><em>Next Chapter</em></h2>
+        <p class="section-body" style="color:#dde6f0">
+          Whether you want to volunteer, partner with us, or donate books, we'd love to hear from you. Reach out and let's make reading accessible to every child.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:hello@thepageproject.org" class="contact-link"><span>✉️</span> hello@thepageproject.org</a>
+          <a href="#" class="contact-link"><span>📸</span> @thepageproject</a>
+          <a href="#" class="contact-link"><span>🐦</span> @PageProjectOrg</a>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="contact-form-card">
+          <h4 class="mb-4" style="font-family:'Playfair Display',serif">Send us a message</h4>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <input type="text" class="form-control custom-input" id="cName" placeholder="Your name">
+            </div>
+            <div class="col-sm-6">
+              <input type="email" class="form-control custom-input" id="cEmail" placeholder="Email address">
+            </div>
+            <div class="col-12">
+              <select class="form-select custom-input" id="cSubject">
+                <option>I want to volunteer</option>
+                <option>I want to donate books</option>
+                <option>I want to partner with you</option>
+                <option>Other inquiry</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <textarea class="form-control custom-input" id="cMessage" rows="4" placeholder="Tell us more…"></textarea>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-primary-custom w-100" id="contactSend">Send Message →</button>
+              <div id="contactMsg" class="log-msg mt-2" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <div class="col-md-4">
+        <div class="footer-brand">
+          <span class="brand-icon">📖</span>
+          <span class="brand-text">The Page Project</span>
+        </div>
+        <p class="footer-tagline">Books for every child, one page at a time.</p>
+      </div>
+      <div class="col-md-4">
+        <h6 class="footer-heading">Quick Links</h6>
+        <ul class="footer-links">
+          <li><a href="#mission">Our Mission</a></li>
+          <li><a href="#impact">Impact</a></li>
+          <li><a href="#tracker">Book Tracker</a></li>
+          <li><a href="#drives">Book Drives</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h6 class="footer-heading">Follow Along</h6>
+        <div class="footer-socials">
+          <a href="#" class="social-pill">Instagram</a>
+          <a href="#" class="social-pill">Twitter</a>
+          <a href="#" class="social-pill">Facebook</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 The Page Project · All rights reserved · Made with ❤️ for literacy</p>
+    </div>
+  </div>
 </footer>
-<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
-
+ 
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index:1100"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- <script src="script.js"></script> -->
+<script src="script.js"></script>
 </body>
 </html>
