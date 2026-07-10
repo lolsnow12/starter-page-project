@@ -63,10 +63,13 @@ function getTotals(list) {
  
 // ── UPDATE ALL UI COUNTERS
 function updateCounters(list) {
+  const { donors } = getTotals(list);
   const loggedTotal = list.reduce((sum, donation) => {
     return sum + Number(donation.books);
   }, 0);
 
+  // Total books from drives + logged donations
+  const total = 802 + list.reduce((s, d) => s + Number(d.books), 0);
   const total = BOOKS_ALREADY_COLLECTED + loggedTotal;
 
   const donors = new Set(
