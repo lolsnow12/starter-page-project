@@ -10,36 +10,36 @@ const GOAL = 1000;
 // ── SAMPLE DRIVES DATA
 const DRIVES = [
   {
-    title: 'Spring Reading Drive',
-    date: 'March 15, 2026',
-    location: 'Eastside Elementary School',
-    books: 312,
+    title: 'Fall Book Drive',
+    date: 'October 19, 2025 • 1:00 PM – 4:00 PM',
+    location: 'Morgan Spur Dr, Fulshear, TX 77441',
+    books: 300,
     status: 'past',
-    description: 'Our biggest single-day event, reaching over 300 students.'
+    description: 'Community book drive supporting local literacy initiatives.'
   },
   {
-    title: 'Library Partnership Drive',
-    date: 'January 28, 2026',
-    location: 'Northside Public Library',
-    books: 185,
+    title: 'Fall Book Drive',
+    date: 'October 26, 2025 • 1:00 PM – 4:00 PM',
+    location: 'Morgan Spur Dr, Fulshear, TX 77441',
+    books: 502,
     status: 'past',
-    description: 'Partnered with the local library to stock their community shelf.'
+    description: 'Second collection event with an even greater community turnout.'
   },
   {
-    title: 'Summer Kickoff Drive',
-    date: 'June 7, 2026',
-    location: 'Community Center, Main Campus',
+    title: 'Summer Book Drive',
+    date: 'July 18, 2026 • 1:00 PM – 4:00 PM',
+    location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
     status: 'upcoming',
-    description: 'Help us collect 500 books before summer break! Drop-off open all day.'
+    description: 'Join us in donating books to help expand access to reading for children in our community.'
   },
   {
-    title: 'Back-to-School Book Blitz',
-    date: 'August 23, 2026',
-    location: 'Lincoln Community School',
+    title: 'Summer Book Drive',
+    date: 'July 25, 2026 • 1:00 PM – 4:00 PM',
+    location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
     status: 'upcoming',
-    description: 'Getting every classroom shelf ready before the new school year.'
+    description: 'Our second summer collection event. Every donated book helps inspire another young reader.'
   }
 ];
  
