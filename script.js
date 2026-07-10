@@ -5,7 +5,7 @@
  
 // ── STORAGE KEY
 const STORAGE_KEY = 'pageproject_donations_v2';
-const GOAL = 10,000;
+const GOAL = 10000;
 const BOOKS_ALREADY_COLLECTED = 802;
  
 // ── SAMPLE DRIVES DATA
@@ -63,31 +63,40 @@ function getTotals(list) {
  
 // ── UPDATE ALL UI COUNTERS
 function updateCounters(list) {
-  const { donors } = getTotals(list);
   const loggedTotal = list.reduce((sum, donation) => {
-    return sum + Number(donation.books);
+    return sum + (Number(donation.books) || 0);
   }, 0);
 
-  // Total books from drives + logged donations
-  const total = 802 + list.reduce((s, d) => s + Number(d.books), 0);
+  // Total books from completed drives plus newly logged donations
   const total = BOOKS_ALREADY_COLLECTED + loggedTotal;
 
+  // Count unique donors
   const donors = new Set(
-    list.map(donation => donation.name.trim().toLowerCase())
+    list
+      .map(donation => donation.name?.trim().toLowerCase())
+      .filter(Boolean)
   ).size;
 
   // Floating hero counter
   animateCount('heroCounter', total);
 
-  // Statistics counter
+  // Statistics counters
   animateCount('stat-books', total);
   animateCount('stat-donors', donors);
 
-  // Progress toward 1,000-book goal
+  // Progress toward the book goal
   const pct = Math.min(Math.round((total / GOAL) * 100), 100);
 
-  document.getElementById('goal-pct').textContent = pct + '%';
-  document.getElementById('goalBarFill').style.width = pct + '%';
+  const goalPct = document.getElementById('goal-pct');
+  const goalBarFill = document.getElementById('goalBarFill');
+
+  if (goalPct) {
+    goalPct.textContent = `${pct}%`;
+  }
+
+  if (goalBarFill) {
+    goalBarFill.style.width = `${pct}%`;
+  }
 }
  
 function animateCount(id, target) {
