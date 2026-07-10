@@ -113,61 +113,63 @@ function animateCount(id, target) {
   requestAnimationFrame(step);
 }
  
-// ── RENDER TABLE
-function renderTable(list, search = '', genre = '') {
-  const body = document.getElementById('donationBody');
-  const empty = document.getElementById('emptyState');
-  const table = document.getElementById('donationTable');
+// ── BOOK GALLERY DATA
+// Replace these placeholder entries with real photos from your drives.
+// src can be any image URL or a local path like 'images/gallery-1.jpg'.
+const GALLERY = [
+  { src: 'https://picsum.photos/seed/pageproject1/600/450', caption: 'Sorting donations from the Fall Book Drive' },
+  { src: 'https://picsum.photos/seed/pageproject2/600/450', caption: 'A box of picture books ready for delivery' },
+  { src: 'https://picsum.photos/seed/pageproject3/600/450', caption: 'Volunteers boxing up middle grade novels' },
+  { src: 'https://picsum.photos/seed/pageproject4/600/450', caption: 'Young Adult titles collected this season' },
+  { src: 'https://picsum.photos/seed/pageproject5/600/450', caption: 'A classroom library restocked with donations' },
+  { src: 'https://picsum.photos/seed/pageproject6/600/450', caption: 'Delivery day at Lincoln Community School' }
+];
  
-  const filtered = list.filter(d => {
-    const q = search.toLowerCase();
-    const matchSearch = !q || d.name.toLowerCase().includes(q)
-      || (d.dest || '').toLowerCase().includes(q)
-      || (d.genre || '').toLowerCase().includes(q)
-      || (d.note || '').toLowerCase().includes(q);
-    const matchGenre = !genre || d.genre === genre;
-    return matchSearch && matchGenre;
-  });
+// ── RENDER GALLERY
+function renderGallery() {
+  const grid = document.getElementById('bookGallery');
+  if (!grid) return;
  
-  const filteredTotal = filtered.reduce((s, d) => s + Number(d.books), 0);
-  document.getElementById('rowCount').textContent = filtered.length;
-  document.getElementById('totalCount').textContent = filteredTotal.toLocaleString();
- 
-  if (filtered.length === 0) {
-    body.innerHTML = '';
-    empty.style.display = 'block';
-    table.style.display = 'none';
+  if (GALLERY.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🖼️</div><p>No photos yet.<br>Check back soon!</p></div>`;
     return;
   }
  
-  empty.style.display = 'none';
-  table.style.display = 'table';
- 
-  // Show newest first
-  const sorted = [...filtered].reverse();
-  body.innerHTML = sorted.map((d, i) => `
-    <tr>
-      <td><strong>${escHtml(d.name)}</strong>${d.note ? `<br><small style="color:#888">${escHtml(d.note)}</small>` : ''}</td>
-      <td><strong style="color:var(--amber)">${Number(d.books).toLocaleString()}</strong></td>
-      <td><span class="badge-genre">${escHtml(d.genre || 'General')}</span></td>
-      <td>${d.dest ? escHtml(d.dest) : '<span style="color:#bbb">—</span>'}</td>
-      <td style="white-space:nowrap; color:#999; font-size:0.78rem">${formatDate(d.date)}</td>
-      <td><button class="del-btn" title="Remove" data-idx="${list.indexOf(d)}">✕</button></td>
-    </tr>
+  grid.innerHTML = GALLERY.map((item, i) => `
+    <button type="button" class="gallery-item fade-in" data-idx="${i}">
+      <img src="${item.src}" alt="${escHtml(item.caption)}" loading="lazy">
+      <span class="gallery-item-caption">${escHtml(item.caption)}</span>
+    </button>
   `).join('');
  
-  // Delete handlers
-  body.querySelectorAll('.del-btn').forEach(btn => {
+  grid.querySelectorAll('.gallery-item').forEach(btn => {
     btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.idx);
-      const donations = loadDonations();
-      donations.splice(idx, 1);
-      saveDonations(donations);
-      refreshAll();
-      showToast('Donation removed.', 'warning');
+      const item = GALLERY[parseInt(btn.dataset.idx)];
+      openLightbox(item);
     });
   });
+ 
+  observeFadeIns();
 }
+ 
+// ── LIGHTBOX
+function openLightbox(item) {
+  const lb = document.getElementById('galleryLightbox');
+  document.getElementById('galleryLightboxImg').src = item.src;
+  document.getElementById('galleryLightboxImg').alt = item.caption;
+  document.getElementById('galleryLightboxCaption').textContent = item.caption;
+  lb.classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('galleryLightbox').classList.remove('open');
+}
+document.getElementById('galleryLightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('galleryLightbox').addEventListener('click', (e) => {
+  if (e.target.id === 'galleryLightbox') closeLightbox();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
  
 function escHtml(s) {
   return String(s)
@@ -186,9 +188,6 @@ function formatDate(iso) {
 // ── REFRESH ALL
 function refreshAll() {
   const donations = loadDonations();
-  const search = document.getElementById('logSearch').value;
-  const genre  = document.getElementById('logFilter').value;
-  renderTable(donations, search, genre);
   updateCounters(donations);
 }
  
@@ -234,10 +233,6 @@ function showMsg(el, text, type) {
   el.style.display = 'block';
   if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
- 
-// ── SEARCH & FILTER
-document.getElementById('logSearch').addEventListener('input', refreshAll);
-document.getElementById('logFilter').addEventListener('change', refreshAll);
  
 // ── TOAST
 function showToast(message, type = 'success') {
@@ -295,18 +290,62 @@ function renderDrives() {
 }
  
 // ── CONTACT FORM
-document.getElementById('contactSend').addEventListener('click', () => {
-  const name = document.getElementById('cName').value.trim();
-  const email = document.getElementById('cEmail').value.trim();
-  const msg = document.getElementById('contactMsg');
+// Sends via Formspree. Sign up free at https://formspree.io, create a form
+// pointed at official.thepageproject@gmail.com, and replace YOUR_FORM_ID below
+// with the endpoint ID Formspree gives you (e.g. "abc1234").
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
+document.getElementById('contactSend').addEventListener('click', async () => {
+  const name    = document.getElementById('cName').value.trim();
+  const email   = document.getElementById('cEmail').value.trim();
+  const subject = document.getElementById('cSubject').value;
+  const message = document.getElementById('cMessage').value.trim();
+  const msg     = document.getElementById('contactMsg');
+  const btn     = document.getElementById('contactSend');
+
+  msg.style.display = 'none';
+
   if (!name || !email) {
     showMsg(msg, 'Please fill in your name and email.', 'error');
     return;
   }
-  showMsg(msg, `✉️ Thanks, ${name}! We'll be in touch soon.`, 'success');
-  document.getElementById('cName').value = '';
-  document.getElementById('cEmail').value = '';
-  document.getElementById('cMessage').value = '';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showMsg(msg, 'Please enter a valid email address.', 'error');
+    return;
+  }
+
+  const originalText = btn.textContent;
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  try {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('subject', subject);
+    formData.append('message', message);
+
+    const response = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: formData
+    });
+
+    if (response.ok) {
+      showMsg(msg, `✉️ Thanks, ${name}! We'll be in touch soon.`, 'success');
+      showToast(`✉️ Message sent!`, 'success');
+      document.getElementById('cName').value = '';
+      document.getElementById('cEmail').value = '';
+      document.getElementById('cMessage').value = '';
+    } else {
+      showMsg(msg, 'Something went wrong sending your message. Please try emailing us directly.', 'error');
+    }
+  } catch (err) {
+    showMsg(msg, 'Network error — please try emailing us directly at official.thepageproject@gmail.com.', 'error');
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 });
  
 // ── NAVBAR SCROLL EFFECT
@@ -344,6 +383,7 @@ document.head.appendChild(style);
 // ── INIT
 document.addEventListener('DOMContentLoaded', () => {
   renderDrives();
+  renderGallery();
   refreshAll();
   observeFadeIns();
  
