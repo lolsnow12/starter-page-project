@@ -62,14 +62,15 @@ function getTotals(list) {
  
 // ── UPDATE ALL UI COUNTERS
 function updateCounters(list) {
-  const { total, donors } = getTotals(list);
- 
-  // Animate hero counter
+  const { donors } = getTotals(list);
+
+  // Total books from drives + logged donations
+  const total = 802 + list.reduce((s, d) => s + Number(d.books), 0);
+
   animateCount('heroCounter', total);
   animateCount('stat-books', total);
   animateCount('stat-donors', donors);
- 
-  // Progress bar
+
   const pct = Math.min(Math.round((total / GOAL) * 100), 100);
   document.getElementById('goal-pct').textContent = pct + '%';
   document.getElementById('goalBarFill').style.width = pct + '%';
@@ -167,7 +168,7 @@ function refreshAll() {
   const search = document.getElementById('logSearch').value;
   const genre  = document.getElementById('logFilter').value;
   renderTable(donations, search, genre);
-  updateCounters(donations);
+  Counters(donations);
 }
  
 // ── LOG FORM SUBMIT
