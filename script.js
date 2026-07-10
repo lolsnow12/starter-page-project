@@ -54,13 +54,6 @@ function saveDonations(list) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 }
  
-// ── TOTALS
-function getTotals(list) {
-  const total = list.reduce((s, d) => s + Number(d.books), 0);
-  const donors = new Set(list.map(d => d.name.trim().toLowerCase())).size;
-  return { total, donors };
-}
- 
 // ── UPDATE ALL UI COUNTERS
 function updateCounters(list) {
   const loggedTotal = list.reduce((sum, donation) => {
@@ -89,6 +82,11 @@ function updateCounters(list) {
 
   const goalPct = document.getElementById('goal-pct');
   const goalBarFill = document.getElementById('goalBarFill');
+  const goalLabel = document.getElementById('goal-label');
+
+  if (goalLabel) {
+    goalLabel.textContent = `${GOAL.toLocaleString()} Book`;
+  }
 
   if (goalPct) {
     goalPct.textContent = `${pct}%`;
@@ -191,7 +189,7 @@ function refreshAll() {
   const search = document.getElementById('logSearch').value;
   const genre  = document.getElementById('logFilter').value;
   renderTable(donations, search, genre);
-  Counters(donations);
+  updateCounters(donations);
 }
  
 // ── LOG FORM SUBMIT
