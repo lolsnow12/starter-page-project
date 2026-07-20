@@ -25,8 +25,10 @@
       <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
         <li class="nav-item"><a class="nav-link" href="#mission">Mission</a></li>
         <li class="nav-item"><a class="nav-link" href="#impact">Impact</a></li>
+        <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
         <li class="nav-item"><a class="nav-link" href="#tracker">Book Tracker</a></li>
         <li class="nav-item"><a class="nav-link" href="#drives">Book Drives</a></li>
+        <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
         <li class="nav-item ms-lg-3">
           <a class="nav-link btn-donate" href="#tracker">Donate Books</a>
@@ -194,6 +196,28 @@
     </div>
   </div>
 </section>
+
+<!-- GALLERY -->
+<section class="section-gallery" id="gallery">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag">Gallery</div>
+      <h2 class="section-title">Moments From<br><em>Our Drives</em></h2>
+      <p class="section-body mx-auto" style="max-width:520px">
+        A few snapshots from past book drives and deliveries. Click any photo for a closer look.
+      </p>
+    </div>
+    <div class="gallery-grid" id="bookGallery"></div>
+  </div>
+</section>
+
+<div class="gallery-lightbox" id="galleryLightbox">
+  <button type="button" class="gallery-lightbox-close" id="galleryLightboxClose" aria-label="Close">&times;</button>
+  <div class="gallery-lightbox-content">
+    <img id="galleryLightboxImg" src="" alt="">
+    <p id="galleryLightboxCaption" class="gallery-lightbox-caption"></p>
+  </div>
+</div>
  
 <!-- BOOK TRACKER -->
 <section class="section-tracker" id="tracker">
@@ -316,6 +340,20 @@
     <div class="row g-4" id="drivesGrid"></div>
   </div>
 </section>
+
+<!-- TEAM -->
+<section class="section-team" id="team">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag">Meet the Team</div>
+      <h2 class="section-title">The People Behind<br><em>The Pages</em></h2>
+      <p class="section-body mx-auto" style="max-width:560px">
+        Click a photo to upload a new one, and click a name or bio to edit it right on the page. Changes are saved on this device.
+      </p>
+    </div>
+    <div id="teamGroups"></div>
+  </div>
+</section>
  
 <!-- CONTACT -->
 <section class="section-contact" id="contact">
@@ -385,8 +423,10 @@
         <ul class="footer-links">
           <li><a href="#mission">Our Mission</a></li>
           <li><a href="#impact">Impact</a></li>
+          <li><a href="#gallery">Gallery</a></li>
           <li><a href="#tracker">Book Tracker</a></li>
           <li><a href="#drives">Book Drives</a></li>
+          <li><a href="#team">Team</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </div>
