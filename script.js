@@ -43,6 +43,27 @@ const DRIVES = [
     description: 'Our second summer collection event. Every donated book helps inspire another young reader.'
   }
 ];
+
+// ── TEAM DATA
+// Default roster. Photos and bios can be overridden right on the page
+// (click a photo to upload one, click a name or bio to edit it) — those
+// edits are saved in the visitor's browser via localStorage.
+const TEAM = [
+  { id: 'founder-1', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-2', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-3', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Officer', group: 'Leadership', bio: 'Click here to add a short bio.' },
+  { id: 'technology-director', name: 'Team Member', role: 'Technology Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
+  { id: 'exec-logistics', name: 'Team Member', role: 'Executive of Logistics', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
+  { id: 'logistics-1', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
+  { id: 'logistics-2', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
+  { id: 'exec-outreach', name: 'Team Member', role: 'Executive of Outreach', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'outreach-1', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'outreach-2', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
+];
+const TEAM_GROUP_ORDER = ['Founders', 'Leadership', 'Logistics Team', 'Outreach Team'];
+const TEAM_STORAGE_KEY = 'pageproject_team_v1';
+const MAX_PHOTO_BYTES = 2 * 1024 * 1024; // 2MB
  
 // ── LOAD / SAVE
 function loadDonations() {
@@ -183,6 +204,131 @@ function formatDate(iso) {
     const d = new Date(iso);
     return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
   } catch { return iso; }
+}
+
+// ── TEAM: LOAD / SAVE OVERRIDES
+// Overrides are keyed by team member id and can contain { name, role, bio, photo }.
+// photo is stored as a base64 data URL so uploads persist across page loads
+// on the same device/browser (there's no server to upload files to on a
+// static GitHub Pages site).
+function loadTeamOverrides() {
+  try {
+    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+function saveTeamOverrides(data) {
+  localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(data));
+}
+
+// ── RENDER TEAM
+function renderTeam() {
+  const container = document.getElementById('teamGroups');
+  if (!container) return;
+
+  const overrides = loadTeamOverrides();
+  const groups = TEAM_GROUP_ORDER.filter(g => TEAM.some(m => m.group === g));
+
+  container.innerHTML = groups.map(group => `
+    <div class="team-group">
+      <h3 class="team-group-title">${escHtml(group)}</h3>
+      <div class="row g-4 mb-5">
+        ${TEAM.filter(m => m.group === group).map(m => renderTeamCard(m, overrides[m.id] || {})).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  attachTeamHandlers();
+  observeFadeIns();
+}
+
+function renderTeamCard(member, data) {
+  const name = data.name || member.name;
+  const bio = data.bio || member.bio;
+  const photo = data.photo || '';
+
+  return `
+    <div class="col-sm-6 col-lg-4 col-xl-3">
+      <div class="team-card fade-in">
+        <div class="team-photo-wrap" data-id="${member.id}" tabindex="0" role="button"
+             aria-label="Upload a photo for ${escHtml(name)}">
+          ${photo
+            ? `<img src="${photo}" alt="${escHtml(name)}" class="team-photo">`
+            : `<div class="team-photo-placeholder">🧑‍🤝‍🧑</div>`}
+          <div class="team-photo-overlay">📷 Click to upload photo</div>
+          <input type="file" accept="image/*" class="team-photo-input" data-id="${member.id}">
+        </div>
+        <div class="team-card-body">
+          <div class="team-name" contenteditable="true" spellcheck="false"
+               data-id="${member.id}" data-field="name">${escHtml(name)}</div>
+          <div class="team-role">${escHtml(member.role)}</div>
+          <div class="team-bio" contenteditable="true" spellcheck="false"
+               data-id="${member.id}" data-field="bio">${escHtml(bio)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function attachTeamHandlers() {
+  // Click (or keyboard-activate) a photo to open the file picker
+  document.querySelectorAll('.team-photo-wrap').forEach(wrap => {
+    const input = wrap.querySelector('.team-photo-input');
+    wrap.addEventListener('click', () => input.click());
+    wrap.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        input.click();
+      }
+    });
+  });
+
+  document.querySelectorAll('.team-photo-input').forEach(input => {
+    input.addEventListener('click', (e) => e.stopPropagation());
+    input.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast('Please choose an image file.', 'error');
+        return;
+      }
+      if (file.size > MAX_PHOTO_BYTES) {
+        showToast('Please choose an image under 2MB.', 'warning');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const overrides = loadTeamOverrides();
+        const id = input.dataset.id;
+        overrides[id] = { ...(overrides[id] || {}), photo: reader.result };
+        saveTeamOverrides(overrides);
+        renderTeam();
+        showToast('Photo updated!', 'success');
+      };
+      reader.onerror = () => showToast('Could not read that image — please try another.', 'error');
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // Editable name / bio fields — save on blur
+  document.querySelectorAll('.team-name, .team-bio').forEach(el => {
+    el.addEventListener('blur', () => {
+      const id = el.dataset.id;
+      const field = el.dataset.field;
+      const value = el.textContent.trim();
+      const overrides = loadTeamOverrides();
+      overrides[id] = { ...(overrides[id] || {}), [field]: value };
+      saveTeamOverrides(overrides);
+    });
+    // Single-line fields (name) shouldn't allow line breaks
+    if (el.dataset.field === 'name') {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          el.blur();
+        }
+      });
+    }
+  });
 }
  
 // ── REFRESH ALL
@@ -384,6 +530,7 @@ document.head.appendChild(style);
 document.addEventListener('DOMContentLoaded', () => {
   renderDrives();
   renderGallery();
+  renderTeam();
   refreshAll();
   observeFadeIns();
  
