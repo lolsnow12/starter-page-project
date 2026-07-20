@@ -51,17 +51,17 @@ const DRIVES = [
 // (click a photo to upload one, click a name or bio to edit it) — those
 // edits are saved in the visitor's browser via localStorage.
 const TEAM = [
-  { id: 'founder-1', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
-  { id: 'founder-2', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
-  { id: 'founder-3', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
-  { id: 'exec-logistics', name: 'Team Member', role: 'Executive of Logistics', group: 'Leadership', bio: 'Click here to add a short bio.' },
-  { id: 'exec-outreach', name: 'Team Member', role: 'Executive of Outreach', group: 'Leadership', bio: 'Click here to add a short bio.' },
+  { id: 'founder-1', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-2', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-3', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'exec-logistics', name: 'Team Member', role: 'Logistics Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
+  { id: 'exec-outreach', name: 'Team Member', role: 'Outreach Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
   { id: 'logistics-1', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
   { id: 'logistics-2', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
   { id: 'outreach-1', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
   { id: 'outreach-2', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
   { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Officer', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
-  { id: 'technology-director', name: 'Team Member', role: 'Technology Director', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
+  { id: 'technology-director', name: 'Team Member', role: 'Webmaster', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
 ];
 const TEAM_GROUP_ORDER = ['Founders', 'Leadership', 'Logistics Team', 'Outreach Team'];
 const TEAM_STORAGE_KEY = 'pageproject_team_v1';
