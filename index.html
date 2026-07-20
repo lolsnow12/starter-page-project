@@ -89,7 +89,7 @@
         <div class="stat-label">Books Donated</div>
       </div>
       <div class="col-6 col-md-3 stat-cell">
-        <div class="stat-number" id="stat-drives">4</div>
+        <div class="stat-number" id="stat-drives">3</div>
         <div class="stat-label">Book Drives Held</div>
       </div>
       <div class="col-6 col-md-3 stat-cell">
@@ -97,7 +97,7 @@
         <div class="stat-label">Communities Reached</div>
       </div>
       <div class="col-6 col-md-3 stat-cell">
-        <div class="stat-number" id="stat-donors">10+</div>
+        <div class="stat-number" id="stat-donors">15+</div>
         <div class="stat-label">Donors</div>
       </div>
     </div>
@@ -231,19 +231,19 @@
     </div>
  
     <!-- Progress Bar -->
-    <div class="goal-bar-wrap mb-5">
+    <div class="goal-bar-wrap goal-bar-wrap-lg mb-5 mx-auto">
       <div class="goal-bar-header">
         <span>Progress toward <strong id="goal-label">1,000 Book</strong> goal</span>
         <span id="goal-pct">0%</span>
       </div>
-      <div class="goal-bar-track">
+      <div class="goal-bar-track goal-bar-track-lg">
         <div class="goal-bar-fill" id="goalBarFill"></div>
       </div>
     </div>
  
-    <div class="row g-4">
+    <div class="row justify-content-center">
       <!-- LOG FORM -->
-      <div class="col-lg-5">
+      <div class="col-lg-7 col-xl-6">
         <div class="tracker-form-card">
           <h4 class="tracker-form-title">📬 Log a Donation</h4>
           <div class="mb-3">
@@ -280,52 +280,6 @@
           <div id="logMsg" class="log-msg mt-3" style="display:none"></div>
         </div>
       </div>
- 
-      <!-- DONATION LOG TABLE -->
-      <div class="col-lg-7">
-        <div class="tracker-log-card">
-          <div class="tracker-log-header">
-            <h4 class="tracker-log-title">📋 Donation Log</h4>
-            <div class="tracker-log-controls">
-              <input type="text" class="form-control custom-input search-small" id="logSearch" placeholder="Search…">
-              <select class="form-select custom-input search-small" id="logFilter">
-                <option value="">All Genres</option>
-                <option>Picture Books</option>
-                <option>Early Readers</option>
-                <option>Middle Grade</option>
-                <option>Young Adult</option>
-                <option>Non-Fiction</option>
-                <option>Science &amp; Nature</option>
-                <option>Biography</option>
-                <option>Mixed / General</option>
-              </select>
-            </div>
-          </div>
-          <div class="tracker-table-wrap">
-            <table class="tracker-table" id="donationTable">
-              <thead>
-                <tr>
-                  <th>Donor</th>
-                  <th>Books</th>
-                  <th>Genre</th>
-                  <th>Destination</th>
-                  <th>Date</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="donationBody"></tbody>
-            </table>
-            <div id="emptyState" class="empty-state">
-              <div class="empty-icon">📭</div>
-              <p>No donations logged yet.<br>Be the first!</p>
-            </div>
-          </div>
-          <div class="tracker-totals" id="trackerTotals">
-            <span>Showing <strong id="rowCount">0</strong> donations</span>
-            <span>Total: <strong id="totalCount">0</strong> books</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -348,8 +302,9 @@
       <div class="section-tag">Meet the Team</div>
       <h2 class="section-title">The People Behind<br><em>The Pages</em></h2>
       <p class="section-body mx-auto" style="max-width:560px">
-        Click a photo to upload a new one, and click a name or bio to edit it right on the page. Changes are saved on this device.
+        Photos and bios are editable by developers only.
       </p>
+      <button type="button" class="team-edit-toggle" id="teamEditToggle">🔒 Developer Edit Mode</button>
     </div>
     <div id="teamGroups"></div>
   </div>
