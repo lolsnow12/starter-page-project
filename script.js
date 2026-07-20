@@ -7,6 +7,7 @@
 const STORAGE_KEY = 'pageproject_donations_v2';
 const GOAL = 10000;
 const BOOKS_ALREADY_COLLECTED = 802;
+const DONORS_ALREADY_COUNTED = 15;
  
 // ── SAMPLE DRIVES DATA
 const DRIVES = [
@@ -31,12 +32,13 @@ const DRIVES = [
     date: 'July 18, 2026 • 1:00 PM – 4:00 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
-    status: 'upcoming',
-    description: 'Join us in donating books to help expand access to reading for children in our community.'
+    status: 'past',
+    pending: true,
+    description: 'Thanks to everyone who came out! Final book count is still being tallied — check back soon.'
   },
   {
     title: 'Summer Book Drive',
-    date: 'July 25, 2026 • 1:00 PM – 4:00 PM',
+    date: 'July 25, 2026 • 6:30 PM – 8:30 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
     status: 'upcoming',
@@ -52,18 +54,50 @@ const TEAM = [
   { id: 'founder-1', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
   { id: 'founder-2', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
   { id: 'founder-3', name: 'Founder Name', role: 'Co-Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
-  { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Officer', group: 'Leadership', bio: 'Click here to add a short bio.' },
-  { id: 'technology-director', name: 'Team Member', role: 'Technology Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
-  { id: 'exec-logistics', name: 'Team Member', role: 'Executive of Logistics', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
+  { id: 'exec-logistics', name: 'Team Member', role: 'Executive of Logistics', group: 'Leadership', bio: 'Click here to add a short bio.' },
+  { id: 'exec-outreach', name: 'Team Member', role: 'Executive of Outreach', group: 'Leadership', bio: 'Click here to add a short bio.' },
   { id: 'logistics-1', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
   { id: 'logistics-2', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
-  { id: 'exec-outreach', name: 'Team Member', role: 'Executive of Outreach', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
   { id: 'outreach-1', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
-  { id: 'outreach-2', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
+  { id: 'outreach-2', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Officer', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'technology-director', name: 'Team Member', role: 'Technology Director', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
 ];
 const TEAM_GROUP_ORDER = ['Founders', 'Leadership', 'Logistics Team', 'Outreach Team'];
 const TEAM_STORAGE_KEY = 'pageproject_team_v1';
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024; // 2MB
+
+// ── DEVELOPER EDIT-MODE GATE
+// This is a static site with no server, so this can't be real authentication —
+// anyone who reads the page source can find this check. It's a practical
+// speed bump: casual visitors can't edit team info, but a developer who
+// knows the passcode can toggle edit mode on for their browser session.
+//
+// To change the passcode: open a browser console anywhere and run
+//   crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourNewPasscode'))
+//     .then(buf => console.log([...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('')))
+// then paste the printed hash in as TEAM_EDIT_PASSCODE_HASH below.
+const TEAM_EDIT_PASSCODE_HASH = '35cb162995f85b21863f8b94f71d76e665ae29732079216585546c50d4177f08'; // default passcode: PageProject2026!
+const TEAM_EDIT_SESSION_KEY = 'pageproject_team_edit_unlocked';
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function isTeamEditUnlocked() {
+  return sessionStorage.getItem(TEAM_EDIT_SESSION_KEY) === 'true';
+}
+function setTeamEditUnlocked(unlocked) {
+  if (unlocked) sessionStorage.setItem(TEAM_EDIT_SESSION_KEY, 'true');
+  else sessionStorage.removeItem(TEAM_EDIT_SESSION_KEY);
+}
+function updateTeamEditToggleUI() {
+  const btn = document.getElementById('teamEditToggle');
+  if (!btn) return;
+  const unlocked = isTeamEditUnlocked();
+  btn.textContent = unlocked ? '🔓 Edit Mode: ON (click to exit)' : '🔒 Developer Edit Mode';
+  btn.classList.toggle('unlocked', unlocked);
+}
  
 // ── LOAD / SAVE
 function loadDonations() {
@@ -84,8 +118,8 @@ function updateCounters(list) {
   // Total books from completed drives plus newly logged donations
   const total = BOOKS_ALREADY_COLLECTED + loggedTotal;
 
-  // Count unique donors
-  const donors = new Set(
+  // Count unique donors (starting from our existing donor base)
+  const donors = DONORS_ALREADY_COUNTED + new Set(
     list
       .map(donation => donation.name?.trim().toLowerCase())
       .filter(Boolean)
@@ -245,23 +279,26 @@ function renderTeamCard(member, data) {
   const name = data.name || member.name;
   const bio = data.bio || member.bio;
   const photo = data.photo || '';
+  const unlocked = isTeamEditUnlocked();
+  const lockedClass = unlocked ? '' : ' locked';
+  const overlayText = unlocked ? '📷 Click to upload photo' : '🔒 Developers only';
 
   return `
     <div class="col-sm-6 col-lg-4 col-xl-3">
       <div class="team-card fade-in">
-        <div class="team-photo-wrap" data-id="${member.id}" tabindex="0" role="button"
-             aria-label="Upload a photo for ${escHtml(name)}">
+        <div class="team-photo-wrap${lockedClass}" data-id="${member.id}" tabindex="0" role="button"
+             aria-label="${unlocked ? `Upload a photo for ${escHtml(name)}` : 'Photo editing is limited to developers'}">
           ${photo
             ? `<img src="${photo}" alt="${escHtml(name)}" class="team-photo">`
             : `<div class="team-photo-placeholder">🧑‍🤝‍🧑</div>`}
-          <div class="team-photo-overlay">📷 Click to upload photo</div>
+          <div class="team-photo-overlay">${overlayText}</div>
           <input type="file" accept="image/*" class="team-photo-input" data-id="${member.id}">
         </div>
         <div class="team-card-body">
-          <div class="team-name" contenteditable="true" spellcheck="false"
+          <div class="team-name${lockedClass}" contenteditable="${unlocked}" spellcheck="false"
                data-id="${member.id}" data-field="name">${escHtml(name)}</div>
           <div class="team-role">${escHtml(member.role)}</div>
-          <div class="team-bio" contenteditable="true" spellcheck="false"
+          <div class="team-bio${lockedClass}" contenteditable="${unlocked}" spellcheck="false"
                data-id="${member.id}" data-field="bio">${escHtml(bio)}</div>
         </div>
       </div>
@@ -270,17 +307,27 @@ function renderTeamCard(member, data) {
 }
 
 function attachTeamHandlers() {
+  const unlocked = isTeamEditUnlocked();
+
   // Click (or keyboard-activate) a photo to open the file picker
   document.querySelectorAll('.team-photo-wrap').forEach(wrap => {
     const input = wrap.querySelector('.team-photo-input');
-    wrap.addEventListener('click', () => input.click());
+    wrap.addEventListener('click', () => {
+      if (!unlocked) {
+        showToast('Photo and bio editing is limited to developers.', 'warning');
+        return;
+      }
+      input.click();
+    });
     wrap.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        input.click();
+        wrap.click();
       }
     });
   });
+
+  if (!unlocked) return; // nothing else to wire up while locked
 
   document.querySelectorAll('.team-photo-input').forEach(input => {
     input.addEventListener('click', (e) => e.stopPropagation());
@@ -330,6 +377,30 @@ function attachTeamHandlers() {
     }
   });
 }
+
+// ── DEVELOPER EDIT-MODE TOGGLE BUTTON
+document.getElementById('teamEditToggle').addEventListener('click', async () => {
+  if (isTeamEditUnlocked()) {
+    setTeamEditUnlocked(false);
+    updateTeamEditToggleUI();
+    renderTeam();
+    showToast('Edit mode turned off.', 'success');
+    return;
+  }
+
+  const attempt = prompt('Enter the developer passcode to edit team photos and bios:');
+  if (attempt === null) return; // cancelled
+
+  const hash = await sha256Hex(attempt);
+  if (hash === TEAM_EDIT_PASSCODE_HASH) {
+    setTeamEditUnlocked(true);
+    updateTeamEditToggleUI();
+    renderTeam();
+    showToast('Edit mode enabled for this session.', 'success');
+  } else {
+    showToast('Incorrect passcode.', 'error');
+  }
+});
  
 // ── REFRESH ALL
 function refreshAll() {
@@ -427,7 +498,11 @@ function renderDrives() {
             <div style="margin-top:16px">
               <div class="drive-books">${d.books.toLocaleString()}</div>
               <div class="drive-books-label">books collected</div>
-            </div>` : ''}
+            </div>` : (d.status === 'past' ? `
+            <div style="margin-top:16px">
+              <div class="drive-books drive-books-pending">Pending</div>
+              <div class="drive-books-label">final count coming soon</div>
+            </div>` : '')}
         </div>
       </div>
     </div>
@@ -531,6 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDrives();
   renderGallery();
   renderTeam();
+  updateTeamEditToggleUI();
   refreshAll();
   observeFadeIns();
  
