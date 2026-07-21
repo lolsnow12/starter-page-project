@@ -26,12 +26,11 @@
         <li class="nav-item"><a class="nav-link" href="#mission">Mission</a></li>
         <li class="nav-item"><a class="nav-link" href="#impact">Impact</a></li>
         <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
-        <li class="nav-item"><a class="nav-link" href="#tracker">Book Tracker</a></li>
         <li class="nav-item"><a class="nav-link" href="#drives">Book Drives</a></li>
         <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
         <li class="nav-item ms-lg-3">
-          <a class="nav-link btn-donate" href="#tracker">Donate Books</a>
+          <a class="nav-link btn-donate" href="#drives">Donate Books</a>
         </li>
       </ul>
     </div>
@@ -56,7 +55,7 @@
           The Page Project collects and donates books to underserved communities, putting the power of reading into the hands of every child — one page at a time.
         </p>
         <div class="hero-actions fade-in delay-3">
-          <a href="#tracker" class="btn btn-primary-custom">Log a Donation</a>
+          <a href="#drives" class="btn btn-primary-custom">🗓 See Our Drives</a>
           <a href="#mission" class="btn btn-ghost-custom">Our Mission →</a>
         </div>
       </div>
@@ -206,6 +205,7 @@
       <p class="section-body mx-auto" style="max-width:520px">
         A few snapshots from past book drives and deliveries. Click any photo for a closer look.
       </p>
+      <button type="button" class="dev-edit-toggle" id="galleryEditToggle">🔒 Developer Edit Mode</button>
     </div>
     <div class="gallery-grid" id="bookGallery"></div>
   </div>
@@ -218,71 +218,6 @@
     <p id="galleryLightboxCaption" class="gallery-lightbox-caption"></p>
   </div>
 </div>
- 
-<!-- BOOK TRACKER -->
-<section class="section-tracker" id="tracker">
-  <div class="container">
-    <div class="text-center mb-5">
-      <div class="section-tag">Donation Tracker</div>
-      <h2 class="section-title">Log &amp; Track<br><em>Every Book</em></h2>
-      <p class="section-body mx-auto" style="max-width:520px">
-        Log your book donation below. Every entry is saved and counted toward our community total. Together we can see the full story of our impact.
-      </p>
-    </div>
- 
-    <!-- Progress Bar -->
-    <div class="goal-bar-wrap goal-bar-wrap-lg mb-5 mx-auto">
-      <div class="goal-bar-header">
-        <span>Progress toward <strong id="goal-label">1,000 Book</strong> goal</span>
-        <span id="goal-pct">0%</span>
-      </div>
-      <div class="goal-bar-track goal-bar-track-lg">
-        <div class="goal-bar-fill" id="goalBarFill"></div>
-      </div>
-    </div>
- 
-    <div class="row justify-content-center">
-      <!-- LOG FORM -->
-      <div class="col-lg-7 col-xl-6">
-        <div class="tracker-form-card">
-          <h4 class="tracker-form-title">📬 Log a Donation</h4>
-          <div class="mb-3">
-            <label class="form-label">Your Name</label>
-            <input type="text" class="form-control custom-input" id="donorName" placeholder="e.g. Jane Smith">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Number of Books</label>
-            <input type="number" class="form-control custom-input" id="bookCount" min="1" placeholder="e.g. 10">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Genre / Category</label>
-            <select class="form-select custom-input" id="bookGenre">
-              <option value="">— Select genre —</option>
-              <option>Picture Books</option>
-              <option>Early Readers</option>
-              <option>Middle Grade</option>
-              <option>Young Adult</option>
-              <option>Non-Fiction</option>
-              <option>Science &amp; Nature</option>
-              <option>Biography</option>
-              <option>Mixed / General</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Destination Community <span class="text-muted">(optional)</span></label>
-            <input type="text" class="form-control custom-input" id="bookDest" placeholder="e.g. Northside Library">
-          </div>
-          <div class="mb-4">
-            <label class="form-label">Note <span class="text-muted">(optional)</span></label>
-            <textarea class="form-control custom-input" id="bookNote" rows="2" placeholder="Any message or dedication..."></textarea>
-          </div>
-          <button class="btn btn-primary-custom w-100" id="logBtn">Log Donation →</button>
-          <div id="logMsg" class="log-msg mt-3" style="display:none"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
  
 <!-- BOOK DRIVES -->
 <section class="section-drives" id="drives">
@@ -304,7 +239,7 @@
       <p class="section-body mx-auto" style="max-width:560px">
         Photos and bios are editable by developers only.
       </p>
-      <button type="button" class="team-edit-toggle" id="teamEditToggle">🔒 Developer Edit Mode</button>
+      <button type="button" class="dev-edit-toggle" id="teamEditToggle">🔒 Developer Edit Mode</button>
     </div>
     <div id="teamGroups"></div>
   </div>
@@ -379,7 +314,6 @@
           <li><a href="#mission">Our Mission</a></li>
           <li><a href="#impact">Impact</a></li>
           <li><a href="#gallery">Gallery</a></li>
-          <li><a href="#tracker">Book Tracker</a></li>
           <li><a href="#drives">Book Drives</a></li>
           <li><a href="#team">Team</a></li>
           <li><a href="#contact">Contact</a></li>
@@ -402,7 +336,7 @@
  
 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index:1100"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Firebase (shared/live data: team photos & bios, donation log) -->
+<!-- Firebase (shared/live data: team photos & bios, gallery photos) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="script.js"></script>
