@@ -2,13 +2,48 @@
    THE PAGE PROJECT — script.js
    Book donation tracking system
 ══════════════════════════════════════════ */
- 
-// ── STORAGE KEY
-const STORAGE_KEY = 'pageproject_donations_v2';
+
+/* ══════════════════════════════════════════
+   FIREBASE SETUP (shared data for all visitors)
+   ──────────────────────────────────────────
+   1. Go to https://console.firebase.google.com → Create a project (free).
+   2. In the project, click "Build" → "Realtime Database" → Create Database
+      → start in "test mode" (we lock it down with rules below).
+   3. Click the gear icon → Project settings → scroll to "Your apps" →
+      click the </> (web) icon → register an app (no hosting needed) →
+      copy the firebaseConfig object it gives you and paste it below,
+      replacing the placeholder values.
+   4. In Realtime Database → Rules, paste this and click Publish:
+        {
+          "rules": {
+            "teamOverrides": { ".read": true, ".write": true },
+            "donations":     { ".read": true, ".write": true }
+          }
+        }
+      NOTE: like the developer passcode below, this is a practical speed
+      bump, not real security — anyone with the config could technically
+      write bad data. For a nonprofit book-drive tracker this is an
+      acceptable tradeoff for "no backend to maintain." If it's ever
+      abused, tighten the rules (e.g. Firebase App Check, or require
+      sign-in) or add server-side validation via Cloud Functions.
+══════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ── CONSTANTS
 const GOAL = 10000;
 const BOOKS_ALREADY_COLLECTED = 802;
 const DONORS_ALREADY_COUNTED = 15;
- 
+
 // ── SAMPLE DRIVES DATA
 const DRIVES = [
   {
@@ -47,9 +82,8 @@ const DRIVES = [
 ];
 
 // ── TEAM DATA
-// Default roster. Photos and bios can be overridden right on the page
-// (click a photo to upload one, click a name or bio to edit it) — those
-// edits are saved in the visitor's browser via localStorage.
+// Default roster (names/roles/groups). Photos and bios are stored in
+// Firebase so any edit made by a developer shows up for every visitor.
 const TEAM = [
   { id: 'founder-1', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
   { id: 'founder-2', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
@@ -64,14 +98,13 @@ const TEAM = [
   { id: 'technology-director', name: 'Team Member', role: 'Webmaster', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
 ];
 const TEAM_GROUP_ORDER = ['Founders', 'Leadership', 'Logistics Team', 'Outreach Team'];
-const TEAM_STORAGE_KEY = 'pageproject_team_v1';
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024; // 2MB
 
 // ── DEVELOPER EDIT-MODE GATE
-// This is a static site with no server, so this can't be real authentication —
-// anyone who reads the page source can find this check. It's a practical
-// speed bump: casual visitors can't edit team info, but a developer who
-// knows the passcode can toggle edit mode on for their browser session.
+// This only gates WHO can edit in their own browser session — it does not
+// affect where the data is stored. Since it's a static site, this can't be
+// real authentication; it's a practical speed bump so casual visitors can't
+// edit team info, while a developer who knows the passcode can.
 //
 // To change the passcode: open a browser console anywhere and run
 //   crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourNewPasscode'))
@@ -98,17 +131,28 @@ function updateTeamEditToggleUI() {
   btn.textContent = unlocked ? '🔓 Edit Mode: ON (click to exit)' : '🔒 Developer Edit Mode';
   btn.classList.toggle('unlocked', unlocked);
 }
- 
-// ── LOAD / SAVE
-function loadDonations() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch { return []; }
+
+// ── SHARED DONATIONS (Firebase)
+// donationsCache always holds the latest snapshot from Firebase; the
+// realtime listener keeps it fresh for every visitor without a refresh.
+let donationsCache = [];
+
+function watchDonations() {
+  db.ref('donations').on('value', (snap) => {
+    const val = snap.val() || {};
+    donationsCache = Object.values(val);
+    updateCounters(donationsCache);
+  }, (err) => {
+    console.error('Failed to sync donations', err);
+  });
 }
-function saveDonations(list) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+
+async function addDonation(donation) {
+  await db.ref('donations').push(donation);
+  // No need to manually refresh — the watchDonations() listener above
+  // fires automatically for every open tab, including this one.
 }
- 
+
 // ── UPDATE ALL UI COUNTERS
 function updateCounters(list) {
   const loggedTotal = list.reduce((sum, donation) => {
@@ -151,7 +195,7 @@ function updateCounters(list) {
     goalBarFill.style.width = `${pct}%`;
   }
 }
- 
+
 function animateCount(id, target) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -167,7 +211,7 @@ function animateCount(id, target) {
   }
   requestAnimationFrame(step);
 }
- 
+
 // ── BOOK GALLERY DATA
 // Replace these placeholder entries with real photos from your drives.
 // src can be any image URL or a local path like 'images/gallery-1.jpg'.
@@ -179,34 +223,34 @@ const GALLERY = [
   { src: 'https://picsum.photos/seed/pageproject5/600/450', caption: 'A classroom library restocked with donations' },
   { src: 'https://picsum.photos/seed/pageproject6/600/450', caption: 'Delivery day at Lincoln Community School' }
 ];
- 
+
 // ── RENDER GALLERY
 function renderGallery() {
   const grid = document.getElementById('bookGallery');
   if (!grid) return;
- 
+
   if (GALLERY.length === 0) {
     grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🖼️</div><p>No photos yet.<br>Check back soon!</p></div>`;
     return;
   }
- 
+
   grid.innerHTML = GALLERY.map((item, i) => `
     <button type="button" class="gallery-item fade-in" data-idx="${i}">
       <img src="${item.src}" alt="${escHtml(item.caption)}" loading="lazy">
       <span class="gallery-item-caption">${escHtml(item.caption)}</span>
     </button>
   `).join('');
- 
+
   grid.querySelectorAll('.gallery-item').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = GALLERY[parseInt(btn.dataset.idx)];
       openLightbox(item);
     });
   });
- 
+
   observeFadeIns();
 }
- 
+
 // ── LIGHTBOX
 function openLightbox(item) {
   const lb = document.getElementById('galleryLightbox');
@@ -225,7 +269,7 @@ document.getElementById('galleryLightbox').addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeLightbox();
 });
- 
+
 function escHtml(s) {
   return String(s)
     .replace(/&/g,'&amp;')
@@ -240,18 +284,29 @@ function formatDate(iso) {
   } catch { return iso; }
 }
 
-// ── TEAM: LOAD / SAVE OVERRIDES
+// ── TEAM: SHARED OVERRIDES (Firebase)
 // Overrides are keyed by team member id and can contain { name, role, bio, photo }.
-// photo is stored as a base64 data URL so uploads persist across page loads
-// on the same device/browser (there's no server to upload files to on a
-// static GitHub Pages site).
-function loadTeamOverrides() {
-  try {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEY)) || {};
-  } catch { return {}; }
+// photo is stored as a base64 data URL. Stored in Firebase so every visitor
+// (not just the editing browser) sees the update.
+let teamOverridesCache = {};
+
+function watchTeamOverrides() {
+  db.ref('teamOverrides').on('value', (snap) => {
+    teamOverridesCache = snap.val() || {};
+    renderTeam();
+  }, (err) => {
+    console.error('Failed to sync team overrides', err);
+  });
 }
-function saveTeamOverrides(data) {
-  localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(data));
+
+async function saveTeamOverride(id, patch) {
+  try {
+    await db.ref('teamOverrides/' + id).update(patch);
+    // No manual re-render needed — watchTeamOverrides() listener will fire.
+  } catch (err) {
+    console.error('Failed to save team override', err);
+    showToast('Could not save — check your connection and try again.', 'error');
+  }
 }
 
 // ── RENDER TEAM
@@ -259,7 +314,7 @@ function renderTeam() {
   const container = document.getElementById('teamGroups');
   if (!container) return;
 
-  const overrides = loadTeamOverrides();
+  const overrides = teamOverridesCache;
   const groups = TEAM_GROUP_ORDER.filter(g => TEAM.some(m => m.group === g));
 
   container.innerHTML = groups.map(group => `
@@ -343,13 +398,11 @@ function attachTeamHandlers() {
         return;
       }
       const reader = new FileReader();
-      reader.onload = () => {
-        const overrides = loadTeamOverrides();
+      reader.onload = async () => {
         const id = input.dataset.id;
-        overrides[id] = { ...(overrides[id] || {}), photo: reader.result };
-        saveTeamOverrides(overrides);
-        renderTeam();
-        showToast('Photo updated!', 'success');
+        showToast('Uploading photo…', 'success');
+        await saveTeamOverride(id, { photo: reader.result });
+        showToast('Photo updated for everyone!', 'success');
       };
       reader.onerror = () => showToast('Could not read that image — please try another.', 'error');
       reader.readAsDataURL(file);
@@ -358,13 +411,11 @@ function attachTeamHandlers() {
 
   // Editable name / bio fields — save on blur
   document.querySelectorAll('.team-name, .team-bio').forEach(el => {
-    el.addEventListener('blur', () => {
+    el.addEventListener('blur', async () => {
       const id = el.dataset.id;
       const field = el.dataset.field;
       const value = el.textContent.trim();
-      const overrides = loadTeamOverrides();
-      overrides[id] = { ...(overrides[id] || {}), [field]: value };
-      saveTeamOverrides(overrides);
+      await saveTeamOverride(id, { [field]: value });
     });
     // Single-line fields (name) shouldn't allow line breaks
     if (el.dataset.field === 'name') {
@@ -401,56 +452,60 @@ document.getElementById('teamEditToggle').addEventListener('click', async () => 
     showToast('Incorrect passcode.', 'error');
   }
 });
- 
-// ── REFRESH ALL
-function refreshAll() {
-  const donations = loadDonations();
-  updateCounters(donations);
-}
- 
+
 // ── LOG FORM SUBMIT
-document.getElementById('logBtn').addEventListener('click', () => {
+document.getElementById('logBtn').addEventListener('click', async () => {
   const name  = document.getElementById('donorName').value.trim();
   const books = parseInt(document.getElementById('bookCount').value);
   const genre = document.getElementById('bookGenre').value;
   const dest  = document.getElementById('bookDest').value.trim();
   const note  = document.getElementById('bookNote').value.trim();
   const msg   = document.getElementById('logMsg');
- 
+  const btn   = document.getElementById('logBtn');
+
   msg.style.display = 'none';
- 
+
   if (!name) { showMsg(msg, 'Please enter your name.', 'error'); return; }
   if (!books || books < 1) { showMsg(msg, 'Please enter a valid number of books (minimum 1).', 'error'); return; }
   if (!genre) { showMsg(msg, 'Please select a genre.', 'error'); return; }
- 
+
   const donation = {
     name, books, genre, dest, note,
     date: new Date().toISOString()
   };
- 
-  const donations = loadDonations();
-  donations.push(donation);
-  saveDonations(donations);
-  refreshAll();
- 
-  // Reset form
-  document.getElementById('donorName').value = '';
-  document.getElementById('bookCount').value = '';
-  document.getElementById('bookGenre').value = '';
-  document.getElementById('bookDest').value = '';
-  document.getElementById('bookNote').value = '';
- 
-  showMsg(msg, `🎉 Thank you, ${name}! ${books} book${books > 1 ? 's' : ''} logged.`, 'success');
-  showToast(`📚 ${books} books logged by ${name}!`, 'success');
+
+  const originalText = btn.textContent;
+  btn.textContent = 'Logging…';
+  btn.disabled = true;
+
+  try {
+    await addDonation(donation);
+
+    // Reset form
+    document.getElementById('donorName').value = '';
+    document.getElementById('bookCount').value = '';
+    document.getElementById('bookGenre').value = '';
+    document.getElementById('bookDest').value = '';
+    document.getElementById('bookNote').value = '';
+
+    showMsg(msg, `🎉 Thank you, ${name}! ${books} book${books > 1 ? 's' : ''} logged.`, 'success');
+    showToast(`📚 ${books} books logged by ${name}!`, 'success');
+  } catch (err) {
+    console.error('Failed to log donation', err);
+    showMsg(msg, 'Could not save your donation — please check your connection and try again.', 'error');
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 });
- 
+
 function showMsg(el, text, type) {
   el.textContent = text;
   el.className = 'log-msg ' + type;
   el.style.display = 'block';
   if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
- 
+
 // ── TOAST
 function showToast(message, type = 'success') {
   const container = document.getElementById('toastContainer');
@@ -478,7 +533,7 @@ function showToast(message, type = 'success') {
     setTimeout(() => toast.remove(), 400);
   }, 3500);
 }
- 
+
 // ── RENDER DRIVES
 function renderDrives() {
   const grid = document.getElementById('drivesGrid');
@@ -509,7 +564,7 @@ function renderDrives() {
   `).join('');
   observeFadeIns();
 }
- 
+
 // ── CONTACT FORM
 // Sends via Formspree. Sign up free at https://formspree.io, create a form
 // pointed at official.thepageproject@gmail.com, and replace YOUR_FORM_ID below
@@ -568,13 +623,13 @@ document.getElementById('contactSend').addEventListener('click', async () => {
     btn.disabled = false;
   }
 });
- 
+
 // ── NAVBAR SCROLL EFFECT
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('mainNav');
   nav.classList.toggle('scrolled', window.scrollY > 20);
 });
- 
+
 // ── INTERSECTION OBSERVER (fade-ins)
 function observeFadeIns() {
   const observer = new IntersectionObserver((entries, obs) => {
@@ -587,7 +642,7 @@ function observeFadeIns() {
   }, { threshold: 0.12 });
   document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 }
- 
+
 // ── TOAST ANIMATION STYLES
 const style = document.createElement('style');
 style.textContent = `
@@ -600,21 +655,26 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
- 
+
 // ── INIT
 document.addEventListener('DOMContentLoaded', () => {
   renderDrives();
   renderGallery();
-  renderTeam();
   updateTeamEditToggleUI();
-  refreshAll();
+
+  // Live-synced shared data: these attach Firebase listeners that render
+  // immediately with current data, then automatically re-render whenever
+  // ANY visitor logs a donation or a developer edits the team section.
+  watchTeamOverrides();
+  watchDonations();
+
   observeFadeIns();
- 
+
   // Hero fade-ins on load
   setTimeout(() => {
     document.querySelectorAll('.hero .fade-in').forEach(el => el.classList.add('visible'));
   }, 100);
- 
+
   // Re-observe on scroll for non-hero elements
   window.addEventListener('scroll', observeFadeIns, { passive: true });
 });
