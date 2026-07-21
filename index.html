@@ -268,29 +268,78 @@
       <div class="col-lg-7">
         <div class="contact-form-card">
           <h4 class="mb-4" style="font-family:'Playfair Display',serif">Send us a message</h4>
-          <div class="row g-3">
+
+          <form
+            class="row g-3"
+            action="https://formsubmit.co/official.thepageproject@gmail.com"
+            method="POST"
+          >
             <div class="col-sm-6">
-              <input type="text" class="form-control custom-input" id="cName" placeholder="Your name">
+              <input
+                type="text"
+                class="form-control custom-input"
+                id="cName"
+                name="name"
+                placeholder="Your name"
+                required
+              >
             </div>
+
             <div class="col-sm-6">
-              <input type="email" class="form-control custom-input" id="cEmail" placeholder="Email address">
+              <input
+                type="email"
+                class="form-control custom-input"
+                id="cEmail"
+                name="email"
+                placeholder="Email address"
+                required
+              >
             </div>
+
             <div class="col-12">
-              <select class="form-select custom-input" id="cSubject">
-                <option>I want to volunteer</option>
-                <option>I want to donate books</option>
-                <option>I want to partner with you</option>
-                <option>Other inquiry</option>
+              <select
+                class="form-select custom-input"
+                id="cSubject"
+                name="inquiry_type"
+                required
+              >
+                <option value="I want to volunteer">I want to volunteer</option>
+                <option value="I want to donate books">I want to donate books</option>
+                <option value="I want to partner with you">I want to partner with you</option>
+                <option value="Other inquiry">Other inquiry</option>
               </select>
             </div>
+
             <div class="col-12">
-              <textarea class="form-control custom-input" id="cMessage" rows="4" placeholder="Tell us more…"></textarea>
+              <textarea
+                class="form-control custom-input"
+                id="cMessage"
+                name="message"
+                rows="4"
+                placeholder="Tell us more…"
+                required
+              ></textarea>
             </div>
+
+            <input
+              type="hidden"
+              name="_subject"
+              value="New message from The Page Project website"
+            >
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="true">
+            <input type="text" name="_honey" style="display:none">
+
             <div class="col-12">
-              <button class="btn btn-primary-custom w-100" id="contactSend">Send Message →</button>
-              <div id="contactMsg" class="log-msg mt-2" style="display:none"></div>
+              <button
+                type="submit"
+                class="btn btn-primary-custom w-100"
+                id="contactSend"
+              >
+                Send Message →
+              </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -337,8 +386,6 @@
 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index:1100"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Firebase (shared/live data: team photos & bios, gallery photos) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 <script src="script.js"></script>
