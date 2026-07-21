@@ -27,13 +27,14 @@
 // --------------------------------------------------------------------------
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDCHnN0klihy9zktyuGajRFTJTTf23LZx4",
+  authDomain: "page-project-27c38.firebaseapp.com",
+  databaseURL: "https://page-project-27c38-default-rtdb.firebaseio.com",
+  projectId: "page-project-27c38",
+  storageBucket: "page-project-27c38.firebasestorage.app",
+  messagingSenderId: "47005585431",
+  appId: "1:47005585431:web:84c670d7f73df19ceecc52",
+  measurementId: "G-YRFXYZS1LN"
 };
 
 // Firebase is optional. The public Team and Gallery sections render immediately
