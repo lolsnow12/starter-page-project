@@ -88,9 +88,9 @@ const DRIVES = [
 // Firebase so any edit made by a developer shows up for every visitor —
 // visitors always see this section; only editing requires the passcode.
 const TEAM = [
-  { id: 'founder-1', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
-  { id: 'founder-2', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
-  { id: 'founder-3', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-1', name: 'Founder Name', role: 'Founder, President', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-2', name: 'Founder Name', role: 'Founder, Executive Director', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-3', name: 'Founder Name', role: 'Founder, Vice President', group: 'Founders', bio: 'Click here to add a short bio.' },
   { id: 'exec-logistics', name: 'Team Member', role: 'Logistics Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
   { id: 'exec-outreach', name: 'Team Member', role: 'Outreach Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
   { id: 'logistics-1', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
