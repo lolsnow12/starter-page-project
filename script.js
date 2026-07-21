@@ -1,31 +1,32 @@
-/* ==========================================================================
-   THE PAGE PROJECT - script.js
+/* ══════════════════════════════════════════
+   THE PAGE PROJECT — script.js
    Team & gallery content management
-   ========================================================================== */
+══════════════════════════════════════════ */
 
-// --------------------------------------------------------------------------
-// FIREBASE SETUP (shared data for all visitors)
-// 1. Go to https://console.firebase.google.com -> Create a project (free).
-// 2. In the project, click "Build" -> "Realtime Database" -> Create Database
-//    -> start in "test mode" (we lock it down with rules below).
-// 3. Click the gear icon -> Project settings -> scroll to "Your apps" ->
-//    click the </> (web) icon -> register an app (no hosting needed) ->
-//    copy the firebaseConfig object it gives you and paste it below,
-//    replacing the placeholder values.
-// 4. In Realtime Database Rules, paste this and click Publish:
-//    {
-//      "rules": {
-//        "teamOverrides": { "read": true, "write": true },
-//        "gallery": { "read": true, "write": true }
-//      }
-//    }
-// NOTE: Like the developer passcode below, this is a practical speed bump,
-// not real security — anyone with the config could technically write bad data.
-// For a nonprofit site this is an acceptable tradeoff for "no backend to maintain."
-// If it's ever abused, tighten the rules (e.g. Firebase App Check, or require
-// sign-in) or add server-side validation via Cloud Functions.
-// --------------------------------------------------------------------------
-
+/* ══════════════════════════════════════════
+   FIREBASE SETUP (shared data for all visitors)
+   ──────────────────────────────────────────
+   1. Go to https://console.firebase.google.com → Create a project (free).
+   2. In the project, click "Build" → "Realtime Database" → Create Database
+      → start in "test mode" (we lock it down with rules below).
+   3. Click the gear icon → Project settings → scroll to "Your apps" →
+      click the </> (web) icon → register an app (no hosting needed) →
+      copy the firebaseConfig object it gives you and paste it below,
+      replacing the placeholder values.
+   4. In Realtime Database → Rules, paste this and click Publish:
+        {
+          "rules": {
+            "teamOverrides": { ".read": true, ".write": true },
+            "gallery":       { ".read": true, ".write": true }
+          }
+        }
+      NOTE: like the developer passcode below, this is a practical speed
+      bump, not real security — anyone with the config could technically
+      write bad data. For a nonprofit site this is an acceptable tradeoff
+      for "no backend to maintain." If it's ever abused, tighten the rules
+      (e.g. Firebase App Check, or require sign-in) or add server-side
+      validation via Cloud Functions.
+══════════════════════════════════════════ */
 const firebaseConfig = {
   apiKey: "AIzaSyDCHnN0klihy9zktyuGajRFTJTTf23LZx4",
   authDomain: "page-project-27c38.firebaseapp.com",
@@ -36,38 +37,20 @@ const firebaseConfig = {
   appId: "1:47005585431:web:84c670d7f73df19ceecc52",
   measurementId: "G-YRFXYZS1LN"
 };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// Firebase is optional. The public Team and Gallery sections render immediately
-// from the default data below, even when Firebase has not been configured yet.
-const FIREBASE_CONFIGURED = !Object.values(firebaseConfig).some(value =>
-  String(value).includes('YOUR_') || String(value).includes('YOUR_PROJECT')
-);
-
-let db = null;
-if (FIREBASE_CONFIGURED && typeof firebase !== 'undefined') {
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-  } catch (error) {
-    console.error('Firebase could not be initialized. Using public fallback content.', error);
-  }
-}
-
-// --------------------------------------------------------------------------
-// STATIC IMPACT NUMBERS
+// ── STATIC IMPACT NUMBERS
 // These reflect totals from completed book drives. Update these two
 // constants by hand whenever a drive wraps up and you have a new count.
-// --------------------------------------------------------------------------
 const BOOKS_ALREADY_COLLECTED = 802;
 const DONORS_ALREADY_COUNTED = 15;
 
-// --------------------------------------------------------------------------
-// SAMPLE DRIVES DATA
-// --------------------------------------------------------------------------
+// ── SAMPLE DRIVES DATA
 const DRIVES = [
   {
     title: 'Fall Book Drive',
-    date: 'October 19, 2025 1:00 PM - 4:00 PM',
+    date: 'October 19, 2025 • 1:00 PM – 4:00 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: 300,
     status: 'past',
@@ -75,7 +58,7 @@ const DRIVES = [
   },
   {
     title: 'Fall Book Drive',
-    date: 'October 26, 2025 1:00 PM - 4:00 PM',
+    date: 'October 26, 2025 • 1:00 PM – 4:00 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: 502,
     status: 'past',
@@ -83,102 +66,90 @@ const DRIVES = [
   },
   {
     title: 'Summer Book Drive',
-    date: 'July 18, 2026 1:00 PM - 4:00 PM',
+    date: 'July 18, 2026 • 1:00 PM – 4:00 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
     status: 'past',
     pending: true,
-    description: 'Thanks to everyone who came out! Final book count is still being tallied, check back soon.'
+    description: 'Thanks to everyone who came out! Final book count is still being tallied — check back soon.'
   },
   {
     title: 'Summer Book Drive',
-    date: 'July 25, 2026 6:30 PM - 8:30 PM',
+    date: 'July 25, 2026 • 6:30 PM – 8:30 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
     status: 'upcoming',
-    description: 'Our second summer collection event. Every donated book helps inspire another young reader!'
+    description: 'Our second summer collection event. Every donated book helps inspire another young reader.'
   }
 ];
 
-// --------------------------------------------------------------------------
-// TEAM DATA
+// ── TEAM DATA
 // Default roster (names/roles/groups). Photos and bios are stored in
-// Firebase so any edit made by a developer shows up for every visitor.
-// Visitors always see this section; only editing requires the passcode.
-// --------------------------------------------------------------------------
+// Firebase so any edit made by a developer shows up for every visitor —
+// visitors always see this section; only editing requires the passcode.
 const TEAM = [
-  { id: 'founder-1', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add bio...' },
-  { id: 'founder-2', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add bio...' },
-  { id: 'founder-3', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add bio...' },
-  { id: 'exec-logistics', name: 'Team Member', role: 'Logistics Director', group: 'Leadership', bio: '' },
-  { id: 'exec-outreach', name: 'Team Member', role: 'Outreach Director', group: 'Leadership', bio: '' },
-  { id: 'logistics-1', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: '' },
-  { id: 'logistics-2', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: '' },
-  { id: 'outreach-1', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: '' },
-  { id: 'outreach-2', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: '' },
-  { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Officer', group: 'Outreach Team', bio: '' },
-  { id: 'technology-director', name: 'Team Member', role: 'Webmaster', group: 'Outreach Team', bio: '' }
+  { id: 'founder-1', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-2', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'founder-3', name: 'Founder Name', role: 'Founder', group: 'Founders', bio: 'Click here to add a short bio.' },
+  { id: 'exec-logistics', name: 'Team Member', role: 'Logistics Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
+  { id: 'exec-outreach', name: 'Team Member', role: 'Outreach Director', group: 'Leadership', bio: 'Click here to add a short bio.' },
+  { id: 'logistics-1', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
+  { id: 'logistics-2', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
+  { id: 'outreach-1', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'outreach-2', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Officer', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'technology-director', name: 'Team Member', role: 'Webmaster', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
 ];
-
 const TEAM_GROUP_ORDER = ['Founders', 'Leadership', 'Logistics Team', 'Outreach Team'];
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024; // 2MB
 
-// --------------------------------------------------------------------------
-// DEFAULT GALLERY (fallback / seed content)
+// ── DEFAULT GALLERY (fallback / seed content)
 // Shown until a developer adds real photos. The first edit made in
 // Developer Edit Mode moves this content into Firebase permanently, so
 // after that this array is no longer used.
-// --------------------------------------------------------------------------
 const DEFAULT_GALLERY = [
   { src: 'https://picsum.photos/seed/pageproject1/600/450', caption: 'Sorting donations from the Fall Book Drive' },
   { src: 'https://picsum.photos/seed/pageproject2/600/450', caption: 'A box of picture books ready for delivery' },
   { src: 'https://picsum.photos/seed/pageproject3/600/450', caption: 'Volunteers boxing up middle grade novels' },
   { src: 'https://picsum.photos/seed/pageproject4/600/450', caption: 'Young Adult titles collected this season' },
-  { src: 'https://picsum.photos/seed/pageproject5/600/450', caption: 'A classroom library restocked' },
-  { src: 'https://picsum.photos/seed/pageproject6/600/450', caption: 'Delivery day at Lincoln Community Center' }
+  { src: 'https://picsum.photos/seed/pageproject5/600/450', caption: 'A classroom library restocked with donations' },
+  { src: 'https://picsum.photos/seed/pageproject6/600/450', caption: 'Delivery day at Lincoln Community School' }
 ];
-
 const MAX_GALLERY_PHOTO_BYTES = 3 * 1024 * 1024; // 3MB
 
-// --------------------------------------------------------------------------
-// SHARED DEVELOPER EDIT-MODE GATE (governs Team & Gallery editing)
+// ── SHARED DEVELOPER EDIT-MODE GATE (governs Team + Gallery editing)
 // This only gates WHO can edit in their own browser session — it does not
-// affect where the data is stored.
-// Since it's a static site, this can't be real authentication; it's a practical
-// speed bump so casual visitors can't edit content, while a developer who
-// knows the passcode can, from any device.
-// One passcode unlocks editing for both the Team and Gallery sections.
+// affect where the data is stored. Since it's a static site, this can't be
+// real authentication; it's a practical speed bump so casual visitors can't
+// edit content, while a developer who knows the passcode can, from any
+// device. One passcode unlocks editing for both the Team and Gallery
+// sections.
 //
-// To change the passcode: open a browser console anywhere and run:
-// crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourNewPasscode'))
-//   .then(buf => console.log([...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('')));
+// To change the passcode: open a browser console anywhere and run
+//   crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourNewPasscode'))
+//     .then(buf => console.log([...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('')))
 // then paste the printed hash in as EDIT_PASSCODE_HASH below.
-// --------------------------------------------------------------------------
-const EDIT_PASSCODE_HASH = '35cb162995f85b21863f8b94f71d76e665ae29732079216585546c50d4177f08';
+const EDIT_PASSCODE_HASH = '35cb162995f85b21863f8b94f71d76e665ae29732079216585546c50d4177f08'; // default passcode: PageProject2026!
 const EDIT_SESSION_KEY = 'pageproject_dev_edit_unlocked';
 
 async function sha256Hex(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
 function isDevEditUnlocked() {
   return sessionStorage.getItem(EDIT_SESSION_KEY) === 'true';
 }
-
 function setDevEditUnlocked(unlocked) {
   if (unlocked) sessionStorage.setItem(EDIT_SESSION_KEY, 'true');
   else sessionStorage.removeItem(EDIT_SESSION_KEY);
 }
-
 function updateDevEditToggleUI() {
   const unlocked = isDevEditUnlocked();
   document.querySelectorAll('.dev-edit-toggle').forEach(btn => {
-    btn.textContent = unlocked ? 'Edit Mode: ON (click to exit)' : 'Developer Edit Mode';
+    btn.textContent = unlocked ? '🔓 Edit Mode: ON (click to exit)' : '🔒 Developer Edit Mode';
     btn.classList.toggle('unlocked', unlocked);
   });
 }
-
 async function toggleDevEditMode() {
   if (isDevEditUnlocked()) {
     setDevEditUnlocked(false);
@@ -203,12 +174,9 @@ async function toggleDevEditMode() {
     showToast('Incorrect passcode.', 'error');
   }
 }
-
 document.querySelectorAll('.dev-edit-toggle').forEach(btn => btn.addEventListener('click', toggleDevEditMode));
 
-// --------------------------------------------------------------------------
-// STATIC IMPACT COUNTERS (hero stats strip)
-// --------------------------------------------------------------------------
+// ── STATIC IMPACT COUNTERS (hero + stats strip)
 function initStaticCounters() {
   animateCount('heroCounter', BOOKS_ALREADY_COLLECTED);
   animateCount('stat-books', BOOKS_ALREADY_COLLECTED);
@@ -218,41 +186,31 @@ function initStaticCounters() {
 function animateCount(id, target) {
   const el = document.getElementById(id);
   if (!el) return;
-
   const start = parseInt(el.textContent) || 0;
   const diff = target - start;
   const duration = 800;
   const startTime = performance.now();
-
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
     el.textContent = Math.round(start + diff * ease);
     if (progress < 1) requestAnimationFrame(step);
   }
-
   requestAnimationFrame(step);
 }
 
 function escHtml(s) {
   return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
 
-// --------------------------------------------------------------------------
-// GALLERY: SHARED, DEVELOPER-EDITABLE (Firebase)
-// --------------------------------------------------------------------------
-let galleryCache = null;
+// ── GALLERY: SHARED, DEVELOPER-EDITABLE (Firebase)
+let galleryCache = null; // null/empty = not yet seeded in Firebase, use defaults
 
 function watchGallery() {
-  if (!db) {
-    renderGallery();
-    return;
-  }
-
   db.ref('gallery').on('value', (snap) => {
     galleryCache = snap.val(); // null if the node is empty
     renderGallery();
@@ -269,9 +227,7 @@ function galleryEntries() {
 // Moves the fallback defaults into Firebase the first time a developer
 // makes an edit, so the edit targets a real, syncable entry.
 async function ensureGallerySeeded() {
-  if (!db) throw new Error('Firebase is not configured.');
   if (galleryCache && Object.keys(galleryCache).length) return;
-
   const updates = {};
   DEFAULT_GALLERY.forEach((item) => {
     const key = db.ref('gallery').push().key;
@@ -284,20 +240,16 @@ async function addGalleryPhoto(src, caption) {
   await ensureGallerySeeded();
   await db.ref('gallery').push({ src, caption });
 }
-
 async function updateGalleryItem(key, patch) {
   await ensureGallerySeeded();
   await db.ref('gallery/' + key).update(patch);
 }
-
 async function deleteGalleryItem(key) {
   await ensureGallerySeeded();
   await db.ref('gallery/' + key).remove();
 }
 
-// --------------------------------------------------------------------------
-// RENDER GALLERY
-// --------------------------------------------------------------------------
+// ── RENDER GALLERY
 function renderGallery() {
   const grid = document.getElementById('bookGallery');
   if (!grid) return;
@@ -306,7 +258,7 @@ function renderGallery() {
   const unlocked = isDevEditUnlocked();
 
   if (entries.length === 0 && !unlocked) {
-    grid.innerHTML = '<div class="empty-state"><div class="empty-icon"></div><p>No photos yet.</p></div>';
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🖼️</div><p>No photos yet.<br>Check back soon!</p></div>`;
     return;
   }
 
@@ -316,8 +268,8 @@ function renderGallery() {
         <div class="gallery-item editable fade-in" data-key="${key}">
           <img src="${item.src}" alt="${escHtml(item.caption)}">
           <div class="gallery-edit-toolbar">
-            <button type="button" class="gallery-icon-btn gallery-replace-btn" data-key="${key}" title="Replace photo"></button>
-            <button type="button" class="gallery-icon-btn gallery-delete-btn" data-key="${key}" title="Delete photo"></button>
+            <button type="button" class="gallery-icon-btn gallery-replace-btn" data-key="${key}" title="Replace photo">📷</button>
+            <button type="button" class="gallery-icon-btn gallery-delete-btn" data-key="${key}" title="Remove photo">🗑</button>
           </div>
           <input type="file" accept="image/*" class="gallery-photo-input" data-key="${key}" style="display:none">
           <div class="gallery-item-caption-edit" contenteditable="true" spellcheck="false" data-key="${key}">${escHtml(item.caption)}</div>
@@ -332,12 +284,13 @@ function renderGallery() {
 
   const addTileHtml = unlocked ? `
     <button type="button" class="gallery-add-tile fade-in" id="galleryAddTile">
-      <span class="gallery-add-icon">+</span>
+      <span class="gallery-add-icon">➕</span>
       <span>Add Photo</span>
     </button>
     <input type="file" accept="image/*" id="galleryAddInput" style="display:none">` : '';
 
   grid.innerHTML = itemsHtml + addTileHtml;
+
   attachGalleryHandlers(unlocked);
   observeFadeIns();
 }
@@ -360,25 +313,18 @@ function attachGalleryHandlers(unlocked) {
       document.querySelector(`.gallery-photo-input[data-key="${btn.dataset.key}"]`).click();
     });
   });
-
   document.querySelectorAll('.gallery-photo-input').forEach(input => {
     input.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      if (!file.type.startsWith('image/')) {
-        showToast('Please choose an image file.', 'error');
-        return;
-      }
-      if (file.size > MAX_GALLERY_PHOTO_BYTES) {
-        showToast('Please choose an image under 3MB.', 'warning');
-        return;
-      }
+      if (!file.type.startsWith('image/')) { showToast('Please choose an image file.', 'error'); return; }
+      if (file.size > MAX_GALLERY_PHOTO_BYTES) { showToast('Please choose an image under 3MB.', 'warning'); return; }
       const reader = new FileReader();
       reader.onload = async () => {
         await updateGalleryItem(input.dataset.key, { src: reader.result });
         showToast('Photo updated for everyone!', 'success');
       };
-      reader.onerror = () => showToast('Could not read that image please try another.', 'error');
+      reader.onerror = () => showToast('Could not read that image — please try another.', 'error');
       reader.readAsDataURL(file);
     });
   });
@@ -392,51 +338,39 @@ function attachGalleryHandlers(unlocked) {
     });
   });
 
-  // Edit a caption save on blur
+  // Edit a caption — save on blur
   document.querySelectorAll('.gallery-item-caption-edit').forEach(el => {
     el.addEventListener('blur', async () => {
       await updateGalleryItem(el.dataset.key, { caption: el.textContent.trim() });
     });
     el.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        el.blur();
-      }
+      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
     });
   });
 
   // Add a new photo
   const addTile = document.getElementById('galleryAddTile');
   const addInput = document.getElementById('galleryAddInput');
-
   if (addTile && addInput) {
     addTile.addEventListener('click', () => addInput.click());
     addInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      if (!file.type.startsWith('image/')) {
-        showToast('Please choose an image file.', 'error');
-        return;
-      }
-      if (file.size > MAX_GALLERY_PHOTO_BYTES) {
-        showToast('Please choose an image under 3MB.', 'warning');
-        return;
-      }
-      const caption = prompt('Add a short caption for this photo:') || '';
+      if (!file.type.startsWith('image/')) { showToast('Please choose an image file.', 'error'); return; }
+      if (file.size > MAX_GALLERY_PHOTO_BYTES) { showToast('Please choose an image under 3MB.', 'warning'); return; }
+      const caption = prompt('Add a short caption for this photo:', '') || '';
       const reader = new FileReader();
       reader.onload = async () => {
         await addGalleryPhoto(reader.result, caption.trim());
         showToast('Photo added for everyone!', 'success');
       };
-      reader.onerror = () => showToast('Could not read that image please try another.', 'error');
+      reader.onerror = () => showToast('Could not read that image — please try another.', 'error');
       reader.readAsDataURL(file);
     });
   }
 }
 
-// --------------------------------------------------------------------------
-// LIGHTBOX
-// --------------------------------------------------------------------------
+// ── LIGHTBOX
 function openLightbox(item) {
   const lb = document.getElementById('galleryLightbox');
   document.getElementById('galleryLightboxImg').src = item.src;
@@ -444,39 +378,25 @@ function openLightbox(item) {
   document.getElementById('galleryLightboxCaption').textContent = item.caption;
   lb.classList.add('open');
 }
-
 function closeLightbox() {
   document.getElementById('galleryLightbox').classList.remove('open');
 }
-
-if (document.getElementById('galleryLightboxClose')) {
-  document.getElementById('galleryLightboxClose').addEventListener('click', closeLightbox);
-}
-
-if (document.getElementById('galleryLightbox')) {
-  document.getElementById('galleryLightbox').addEventListener('click', (e) => {
-    if (e.target.id === 'galleryLightbox') closeLightbox();
-  });
-}
-
+document.getElementById('galleryLightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('galleryLightbox').addEventListener('click', (e) => {
+  if (e.target.id === 'galleryLightbox') closeLightbox();
+});
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeLightbox();
 });
 
-// --------------------------------------------------------------------------
-// TEAM SHARED OVERRIDES (Firebase)
+// ── TEAM: SHARED OVERRIDES (Firebase)
 // Overrides are keyed by team member id and can contain { name, role, bio, photo }.
 // photo is stored as a base64 data URL. Stored in Firebase so every visitor
-// sees the update.
-// --------------------------------------------------------------------------
+// (not just the editing browser) sees the update. Visitors always see the
+// team cards — the passcode only gates the ability to edit them.
 let teamOverridesCache = {};
 
 function watchTeamOverrides() {
-  if (!db) {
-    renderTeam();
-    return;
-  }
-
   db.ref('teamOverrides').on('value', (snap) => {
     teamOverridesCache = snap.val() || {};
     renderTeam();
@@ -486,22 +406,16 @@ function watchTeamOverrides() {
 }
 
 async function saveTeamOverride(id, patch) {
-  if (!db) {
-    showToast('Connect Firebase before saving shared edits.', 'warning');
-    return;
-  }
   try {
     await db.ref('teamOverrides/' + id).update(patch);
     // No manual re-render needed — watchTeamOverrides() listener will fire.
   } catch (err) {
     console.error('Failed to save team override', err);
-    showToast('Could not save check your connection and try again.', 'error');
+    showToast('Could not save — check your connection and try again.', 'error');
   }
 }
 
-// --------------------------------------------------------------------------
-// RENDER TEAM
-// --------------------------------------------------------------------------
+// ── RENDER TEAM
 function renderTeam() {
   const container = document.getElementById('teamGroups');
   if (!container) return;
@@ -525,17 +439,19 @@ function renderTeam() {
 function renderTeamCard(member, data) {
   const name = data.name || member.name;
   const bio = data.bio || member.bio;
-  const photo = data.photo || null;
+  const photo = data.photo || '';
   const unlocked = isDevEditUnlocked();
   const lockedClass = unlocked ? '' : ' locked';
-  const overlayText = unlocked ? 'Click to upload photo' : 'Developers only';
+  const overlayText = unlocked ? '📷 Click to upload photo' : '🔒 Developers only';
 
   return `
     <div class="col-sm-6 col-lg-4 col-xl-3">
       <div class="team-card fade-in">
         <div class="team-photo-wrap${lockedClass}" data-id="${member.id}" tabindex="0" role="button"
              aria-label="${unlocked ? `Upload a photo for ${escHtml(name)}` : 'Photo editing is limited to developers'}">
-          ${photo ? `<img src="${photo}" alt="${escHtml(name)}" class="team-photo">` : `<div class="team-photo-placeholder"></div>`}
+          ${photo
+            ? `<img src="${photo}" alt="${escHtml(name)}" class="team-photo">`
+            : `<div class="team-photo-placeholder">🧑‍🤝‍🧑</div>`}
           <div class="team-photo-overlay">${overlayText}</div>
           <input type="file" accept="image/*" class="team-photo-input" data-id="${member.id}">
         </div>
@@ -547,7 +463,8 @@ function renderTeamCard(member, data) {
                data-id="${member.id}" data-field="bio">${escHtml(bio)}</div>
         </div>
       </div>
-    </div>`;
+    </div>
+  `;
 }
 
 function attachTeamHandlers() {
@@ -563,7 +480,6 @@ function attachTeamHandlers() {
       }
       input.click();
     });
-
     wrap.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -587,20 +503,19 @@ function attachTeamHandlers() {
         showToast('Please choose an image under 2MB.', 'warning');
         return;
       }
-
       const reader = new FileReader();
       reader.onload = async () => {
         const id = input.dataset.id;
-        showToast('Uploading photo...', 'success');
+        showToast('Uploading photo…', 'success');
         await saveTeamOverride(id, { photo: reader.result });
         showToast('Photo updated for everyone!', 'success');
       };
-      reader.onerror = () => showToast('Could not read that image please try another.', 'error');
+      reader.onerror = () => showToast('Could not read that image — please try another.', 'error');
       reader.readAsDataURL(file);
     });
   });
 
-  // Editable name / bio fields save on blur
+  // Editable name / bio fields — save on blur
   document.querySelectorAll('.team-name, .team-bio').forEach(el => {
     el.addEventListener('blur', async () => {
       const id = el.dataset.id;
@@ -608,7 +523,6 @@ function attachTeamHandlers() {
       const value = el.textContent.trim();
       await saveTeamOverride(id, { [field]: value });
     });
-
     // Single-line fields (name) shouldn't allow line breaks
     if (el.dataset.field === 'name') {
       el.addEventListener('keydown', (e) => {
@@ -621,18 +535,9 @@ function attachTeamHandlers() {
   });
 }
 
-// --------------------------------------------------------------------------
-// TOAST NOTIFICATIONS
-// --------------------------------------------------------------------------
+// ── TOAST
 function showToast(message, type = 'success') {
-  let container = document.getElementById('toastContainer');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toastContainer';
-    container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999;';
-    document.body.appendChild(container);
-  }
-
+  const container = document.getElementById('toastContainer');
   const colors = { success: '#1f6e6e', warning: '#c96f18', error: '#c0392b' };
   const toast = document.createElement('div');
   toast.style.cssText = `
@@ -649,46 +554,35 @@ function showToast(message, type = 'success') {
     cursor: pointer;
     max-width: 320px;
   `;
-
   toast.textContent = message;
   container.appendChild(toast);
-
   toast.addEventListener('click', () => toast.remove());
-
   setTimeout(() => {
     toast.style.animation = 'fadeOutRight 0.4s ease forwards';
     setTimeout(() => toast.remove(), 400);
   }, 3500);
 }
-
 function showMsg(el, text, type) {
-  if (!el) return;
   el.textContent = text;
   el.className = 'log-msg ' + type;
   el.style.display = 'block';
-  if (type === 'success') {
-    setTimeout(() => { el.style.display = 'none'; }, 4000);
-  }
+  if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
-// --------------------------------------------------------------------------
-// RENDER DRIVES
-// --------------------------------------------------------------------------
+// ── RENDER DRIVES
 function renderDrives() {
   const grid = document.getElementById('drivesGrid');
-  if (!grid) return;
-
   grid.innerHTML = DRIVES.map(d => `
     <div class="col-md-6 col-lg-3">
       <div class="drive-card fade-in">
         <div class="drive-card-banner"></div>
         <div class="drive-card-body">
-          <div class="drive-status ${d.status}">${d.status === 'upcoming' ? 'Upcoming' : 'Completed'}</div>
+          <div class="drive-status ${d.status}">${d.status === 'upcoming' ? '🗓 Upcoming' : '✅ Completed'}</div>
           <h5 class="drive-card-title">${d.title}</h5>
           <div class="drive-meta">
-            <span>${d.date}</span>
-            <span style="margin-top:4px">${d.location}</span>
-            <span style="margin-top:8px; color: var(--ink-soft)">${d.description}</span>
+            <span>📅 ${d.date}</span>
+            <span style="margin-top:4px">📍 ${d.location}</span>
+            <span style="margin-top:8px; color:var(--ink-soft)">${d.description}</span>
           </div>
           ${d.books ? `
             <div style="margin-top:16px">
@@ -703,59 +597,19 @@ function renderDrives() {
       </div>
     </div>
   `).join('');
-
   observeFadeIns();
 }
 
-// --------------------------------------------------------------------------
-// CONTACT FORM
-// Opens the visitor's email app with a pre-filled message addressed to us.
-// No third-party form service required.
-// --------------------------------------------------------------------------
-const CONTACT_EMAIL = 'official.thepageproject@gmail.com';
+// ── CONTACT FORM
+// The HTML form submits through FormSubmit, so no JavaScript handler is needed.
 
-const contactSendBtn = document.getElementById('contactSend');
-if (contactSendBtn) {
-  contactSendBtn.addEventListener('click', () => {
-    const name = document.getElementById('cName').value.trim();
-    const email = document.getElementById('cEmail').value.trim();
-    const subject = document.getElementById('cSubject').value;
-    const message = document.getElementById('cMessage').value.trim();
-    const msg = document.getElementById('contactMsg');
-
-    if (msg) msg.style.display = 'none';
-
-    if (!name || !email) {
-      showMsg(msg, 'Please fill in your name and email.', 'error');
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showMsg(msg, 'Please enter a valid email address.', 'error');
-      return;
-    }
-
-    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
-    const mailtoLink = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    window.location.href = mailtoLink;
-    showMsg(msg, `Opening your email app, addressed to ${CONTACT_EMAIL}...`, 'success');
-  });
-}
-
-// --------------------------------------------------------------------------
-// NAVBAR SCROLL EFFECT
-// --------------------------------------------------------------------------
+// ── NAVBAR SCROLL EFFECT
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('mainNav');
-  if (nav) {
-    nav.classList.toggle('scrolled', window.scrollY > 20);
-  }
+  nav.classList.toggle('scrolled', window.scrollY > 20);
 });
 
-// --------------------------------------------------------------------------
-// INTERSECTION OBSERVER (fade-ins)
-// --------------------------------------------------------------------------
+// ── INTERSECTION OBSERVER (fade-ins)
 function observeFadeIns() {
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
@@ -765,18 +619,15 @@ function observeFadeIns() {
       }
     });
   }, { threshold: 0.12 });
-
   document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 }
 
-// --------------------------------------------------------------------------
-// TOAST ANIMATION STYLES
-// --------------------------------------------------------------------------
+// ── TOAST ANIMATION STYLES
 const style = document.createElement('style');
 style.textContent = `
   @keyframes slideIn {
     from { transform: translateX(100px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    to   { transform: translateX(0); opacity: 1; }
   }
   @keyframes fadeOutRight {
     to { transform: translateX(120px); opacity: 0; }
@@ -784,23 +635,19 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// --------------------------------------------------------------------------
-// INIT
-// --------------------------------------------------------------------------
+// ── INIT
 document.addEventListener('DOMContentLoaded', () => {
   renderDrives();
   updateDevEditToggleUI();
 
-  // Always render public content immediately. Visitors never need to unlock
-  // Developer Edit Mode to see the Team or Gallery.
+  // Show Team and Gallery immediately to every visitor.
   renderTeam();
   renderGallery();
 
-  // Live-synced shared data: these attach Firebase listeners that render
-  // immediately with current data, then automatically re-render whenever
-  // ANY developer edits the team section or gallery.
+  // Firebase then loads and applies the newest shared edits.
   watchTeamOverrides();
   watchGallery();
+
   initStaticCounters();
   observeFadeIns();
 
