@@ -43,7 +43,7 @@ const db = firebase.database();
 // ── STATIC IMPACT NUMBERS
 // These reflect totals from completed book drives. Update these two
 // constants by hand whenever a drive wraps up and you have a new count.
-const BOOKS_ALREADY_COLLECTED = 802;
+const BOOKS_ALREADY_COLLECTED = 1000;
 const DONORS_ALREADY_COUNTED = 15;
 
 // ── SAMPLE DRIVES DATA
@@ -66,7 +66,7 @@ const DRIVES = [
   },
   {
     title: 'Summer Book Drive',
-    date: 'July 18, 2026 • 1:00 PM – 4:00 PM',
+    date: 'July 18, 2026 • 6:30 PM – 8:30 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
     status: 'past',
@@ -178,12 +178,12 @@ document.querySelectorAll('.dev-edit-toggle').forEach(btn => btn.addEventListene
 
 // ── STATIC IMPACT COUNTERS (hero + stats strip)
 function initStaticCounters() {
-  animateCount('heroCounter', BOOKS_ALREADY_COLLECTED);
-  animateCount('stat-books', BOOKS_ALREADY_COLLECTED);
-  animateCount('stat-donors', DONORS_ALREADY_COUNTED);
+  animateCount('heroCounter', BOOKS_ALREADY_COLLECTED, '+');
+  animateCount('stat-books', BOOKS_ALREADY_COLLECTED, '+');
+  animateCount('stat-donors', DONORS_ALREADY_COUNTED, '+');
 }
 
-function animateCount(id, target) {
+function animateCount(id, target, suffix = '') {
   const el = document.getElementById(id);
   if (!el) return;
   const start = parseInt(el.textContent) || 0;
@@ -193,7 +193,7 @@ function animateCount(id, target) {
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.round(start + diff * ease);
+    el.textContent = Math.round(start + diff * ease) + (progress >= 1 ? suffix : '');
     if (progress < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
