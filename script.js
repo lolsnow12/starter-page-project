@@ -76,7 +76,7 @@ const DRIVES = [
   {
     title: 'Summer Book Drive',
     date: 'July 25, 2026 • 6:30 PM – 8:30 PM',
-    location: 'Morgan Spur Dr, Fulshear, TX 77441',
+    location: '4344 Cross Creek Bend Ln, Fulshear, TX 77441',
     books: null,
     status: 'upcoming',
     description: 'Our second summer collection event. Every donated book helps inspire another young reader.'
