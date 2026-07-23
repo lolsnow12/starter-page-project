@@ -97,7 +97,7 @@ const TEAM = [
   { id: 'logistics-2', name: 'Team Member', role: 'Logistics Team Member', group: 'Logistics Team', bio: 'Click here to add a short bio.' },
   { id: 'outreach-1', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
   { id: 'outreach-2', name: 'Team Member', role: 'Outreach Team Member', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
-  { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Officer', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
+  { id: 'social-media-officer', name: 'Team Member', role: 'Social Media Coordinator', group: 'Outreach Team', bio: 'Click here to add a short bio.' },
   { id: 'technology-director', name: 'Team Member', role: 'Webmaster', group: 'Outreach Team', bio: 'Click here to add a short bio.' }
 ];
 const TEAM_GROUP_ORDER = ['Founders', 'Leadership', 'Logistics Team', 'Outreach Team'];
