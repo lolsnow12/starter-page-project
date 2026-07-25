@@ -664,30 +664,36 @@ em { font-style: italic; color: var(--amber); }
 .team-bio:focus { background: rgba(232,135,42,0.08); }
 .team-photo-input { display: none; }
 
-/* Shared Developer Edit Mode toggle (Team + Gallery) */
+/* Shared Developer Edit Mode toggle (Team + Gallery)
+   Small icon-only circular button, no label text. */
 .dev-edit-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   margin-top: 4px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
   background: var(--warm);
   color: var(--ink-soft);
   border: 1.5px solid rgba(74,63,48,0.2);
-  border-radius: 100px;
-  padding: 8px 18px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  line-height: 1;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  opacity: 0.55;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
 }
 .dev-edit-toggle:hover {
   border-color: var(--amber);
   color: var(--amber-dk);
+  opacity: 1;
 }
 .dev-edit-toggle.unlocked {
   background: var(--teal);
   color: #fff;
   border-color: var(--teal);
+  opacity: 1;
 }
 .dev-edit-toggle.unlocked:hover { background: var(--teal-lt); }
 
