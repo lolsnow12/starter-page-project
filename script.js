@@ -146,7 +146,9 @@ function setDevEditUnlocked(unlocked) {
 function updateDevEditToggleUI() {
   const unlocked = isDevEditUnlocked();
   document.querySelectorAll('.dev-edit-toggle').forEach(btn => {
-    btn.textContent = unlocked ? '🔓 Edit Mode: ON (click to exit)' : '🔒 Developer Edit Mode';
+    btn.textContent = unlocked ? '🔓' : '🔒';
+    btn.title = unlocked ? 'Edit mode on — click to exit' : 'Developer edit mode';
+    btn.setAttribute('aria-label', btn.title);
     btn.classList.toggle('unlocked', unlocked);
   });
 }
@@ -442,7 +444,7 @@ function renderTeamCard(member, data) {
   const photo = data.photo || '';
   const unlocked = isDevEditUnlocked();
   const lockedClass = unlocked ? '' : ' locked';
-  const overlayText = unlocked ? '📷 Click to upload photo' : '🔒 Developers only';
+  const overlayText = unlocked ? '📷 Click to upload photo' : '🔒';
 
   return `
     <div class="col-sm-6 col-lg-4 col-xl-3">
