@@ -66,7 +66,7 @@ const DRIVES = [
   },
   {
     title: 'Summer Book Drive',
-    date: 'July 18, 2026 • 6:30 PM – 8:30 PM',
+    date: 'July 19, 2026 • 6:30 PM – 8:30 PM',
     location: 'Morgan Spur Dr, Fulshear, TX 77441',
     books: null,
     status: 'past',
@@ -79,6 +79,7 @@ const DRIVES = [
     location: '4344 Cross Creek Bend Ln, Fulshear, TX 77441',
     books: null,
     status: 'upcoming',
+    pending: true,
     description: 'Our second summer collection event. Every donated book helps inspire another young reader.'
   }
 ];
@@ -590,7 +591,7 @@ function renderDrives() {
             <div style="margin-top:16px">
               <div class="drive-books">${d.books.toLocaleString()}</div>
               <div class="drive-books-label">books collected</div>
-            </div>` : (d.status === 'past' ? `
+            </div>` : (d.pending ? `
             <div style="margin-top:16px">
               <div class="drive-books drive-books-pending">Pending</div>
               <div class="drive-books-label">final count coming soon</div>
