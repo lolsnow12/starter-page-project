@@ -43,7 +43,7 @@ const db = firebase.database();
 // ── STATIC IMPACT NUMBERS
 // These reflect totals from completed book drives. Update these two
 // constants by hand whenever a drive wraps up and you have a new count.
-const BOOKS_ALREADY_COLLECTED = 1000;
+const BOOKS_ALREADY_COLLECTED = 2000;
 const DONORS_ALREADY_COUNTED = 15;
 
 // ── SAMPLE DRIVES DATA
@@ -81,6 +81,14 @@ const DRIVES = [
     status: 'past',
     //pending: true,
     description: 'Our second summer collection event. Every donated book helps inspire another young reader.'
+  },
+  {
+    title: 'Summer Book Drive',
+    date: 'August 22, 2026 • 6:00 PM – 7:00 PM',
+    location: 'Morgan Spur Dr, Fulshear, TX 77441',
+    books: 360,
+    status: 'past',
+    description: 'Community book drive supporting local literacy initiatives.'
   }
 ];
 
